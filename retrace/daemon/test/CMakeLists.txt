@@ -1,8 +1,5 @@
 
 
-# TODO: find the right way to include this
-add_subdirectory(/usr/src/gtest gtest)
-
 include_directories (
   ${CMAKE_SOURCE_DIR}/retrace/daemon
   )
