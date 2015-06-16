@@ -29,6 +29,7 @@
 
 #include "os_time.hpp"
 #include "retrace.hpp"
+#include "retrace_state.hpp"
 
 #ifdef _WIN32
 #include <dxerr.h>
@@ -98,11 +99,11 @@ checkMismatch(trace::Call &call, const char *expr, trace::Value *traceValue, lon
 }
 
 
-void ignore(trace::Call &call) {
+void ignore(retrace::RetraceState *state, trace::Call &call) {
     (void)call;
 }
 
-void unsupported(trace::Call &call) {
+void unsupported(RetraceState *state, trace::Call &call) {
     warning(call) << "unsupported " << call.name() << " call\n";
 }
 
@@ -120,7 +121,8 @@ void Retracer::addCallbacks(const Entry *entries) {
 }
 
 
-void Retracer::retrace(trace::Call &call) {
+void Retracer::retrace(RetraceState *state,
+                       trace::Call &call) {
     call_dumped = false;
 
     Callback callback = 0;
@@ -154,7 +156,7 @@ void Retracer::retrace(trace::Call &call) {
         }
     }
 
-    callback(call);
+    callback(state, call);
 }
 
 

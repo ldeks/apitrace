@@ -27,7 +27,7 @@
 
 #include "glws.hpp"
 #include "retrace.hpp"
-
+#include "retrace_state.hpp"
 
 namespace glretrace {
 
@@ -90,7 +90,8 @@ Context *
 createContext(Context *shareContext = 0);
 
 bool
-makeCurrent(trace::Call &call, glws::Drawable *drawable, Context *context);
+makeCurrent(retrace::RetraceState *state, trace::Call &call,
+            glws::Drawable *drawable, Context *context);
 
 
 void
@@ -102,13 +103,13 @@ extern const retrace::Entry glx_callbacks[];
 extern const retrace::Entry wgl_callbacks[];
 extern const retrace::Entry egl_callbacks[];
 
-void frame_complete(trace::Call &call);
-void initContext();
+void frame_complete(retrace::RetraceState *state, trace::Call &call);
+void initContext(retrace::RetraceState *state);
 
 
 void updateDrawable(int width, int height);
 
-void flushQueries();
+void flushQueries(retrace::RetraceState *state);
 void beginProfile(trace::Call &call, bool isDraw);
 void endProfile(trace::Call &call, bool isDraw);
 

@@ -31,7 +31,6 @@
 #include "retrace.hpp"
 #include "retrace_swizzle.hpp"
 
-
 namespace retrace {
 
 
@@ -99,9 +98,9 @@ upperBound(unsigned long long address) {
 }
 
 void
-addRegion(trace::Call &call, unsigned long long address, void *buffer, unsigned long long size)
+addRegion(RetraceState *state, trace::Call &call, unsigned long long address, void *buffer, unsigned long long size)
 {
-    if (retrace::verbosity >= 2) {
+    if (state->verbosity >= 2) {
         std::cout
             << "region "
             << std::hex
@@ -190,7 +189,7 @@ delRegionByPointer(void *ptr) {
 }
 
 static void
-lookupAddress(unsigned long long address, void * & ptr, size_t & len) {
+lookupAddress(RetraceState *state, unsigned long long address, void * & ptr, size_t & len) {
     RegionMap::iterator it = lookupRegion(address);
     if (it != regionMap.end()) {
         unsigned long long offset = address - it->first;
@@ -199,7 +198,7 @@ lookupAddress(unsigned long long address, void * & ptr, size_t & len) {
         ptr = (char *)it->second.buffer + offset;
         len = it->second.size - offset;
 
-        if (retrace::verbosity >= 2) {
+        if (state->verbosity >= 2) {
             std::cout
                 << "region "
                 << std::hex
@@ -298,7 +297,7 @@ addObj(trace::Call &call, trace::Value &value, void *obj) {
 
     _obj_map[address] = obj;
     
-    if (retrace::verbosity >= 2) {
+    if (state->verbosity >= 2) {
         std::cout << std::hex << "obj 0x" << address << " -> 0x" << size_t(obj) << std::dec << "\n";
     }
 }
@@ -307,7 +306,7 @@ void
 delObj(trace::Value &value) {
     unsigned long long address = value.toUIntPtr();
     _obj_map.erase(address);
-    if (retrace::verbosity >= 2) {
+    if (state->verbosity >= 2) {
         std::cout << std::hex << "obj 0x" << address << std::dec << " del\n";
     }
 }
@@ -326,7 +325,7 @@ toObjPointer(trace::Call &call, trace::Value &value) {
         obj = NULL;
     }
 
-    if (retrace::verbosity >= 2) {
+    if (state->verbosity >= 2) {
         std::cout << std::hex << "obj 0x" << address << " <- 0x" << size_t(obj) << std::dec << "\n";
     }
 

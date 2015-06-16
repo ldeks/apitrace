@@ -40,6 +40,7 @@
 #include "glstate.hpp"
 #include "glretrace.hpp"
 
+using retrace::RetraceState;
 
 namespace glretrace {
 
@@ -140,7 +141,7 @@ currentContextPtr;
 
 
 bool
-makeCurrent(trace::Call &call, glws::Drawable *drawable, Context *context)
+makeCurrent(RetraceState *state, trace::Call &call, glws::Drawable *drawable, Context *context)
 {
     Context *currentContext = currentContextPtr;
     glws::Drawable *currentDrawable = currentContext ? currentContext->drawable : NULL;
@@ -152,11 +153,11 @@ makeCurrent(trace::Call &call, glws::Drawable *drawable, Context *context)
     if (currentContext) {
         glFlush();
         if (!retrace::doubleBuffer) {
-            frame_complete(call);
+            frame_complete(state, call);
         }
     }
 
-    flushQueries();
+    flushQueries(state);
 
     bool success = glws::makeCurrent(drawable, context ? context->wsContext : NULL);
 
@@ -171,7 +172,7 @@ makeCurrent(trace::Call &call, glws::Drawable *drawable, Context *context)
         context->drawable = drawable;
         
         if (!context->used) {
-            initContext();
+            initContext(state);
             context->used = true;
         }
     }

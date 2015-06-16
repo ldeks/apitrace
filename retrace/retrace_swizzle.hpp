@@ -29,7 +29,7 @@
 #include <map>
 
 #include "trace_model.hpp"
-
+#include "retrace_state.hpp"
 
 namespace retrace {
 
@@ -98,7 +98,7 @@ public:
 
 
 void
-addRegion(trace::Call &call, unsigned long long address, void *buffer, unsigned long long size);
+addRegion(RetraceState *state, trace::Call &call, unsigned long long address, void *buffer, unsigned long long size);
 
 void
 delRegionByPointer(void *ptr);

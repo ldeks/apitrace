@@ -27,6 +27,7 @@
 #include "glproc.hpp"
 #include "retrace.hpp"
 #include "glretrace.hpp"
+#include "retrace_state.hpp"
 
 #if !defined(HAVE_X11)
 
@@ -37,7 +38,7 @@
 
 
 using namespace glretrace;
-
+using retrace::RetraceState;
 
 typedef std::map<unsigned long, glws::Drawable *> DrawableMap;
 typedef std::map<unsigned long long, Context *> ContextMap;
@@ -75,7 +76,7 @@ getContext(unsigned long long context_ptr) {
     return it->second;
 }
 
-static void retrace_glXCreateContext(trace::Call &call) {
+static void retrace_glXCreateContext(RetraceState *state, trace::Call &call) {
     unsigned long long orig_context = call.ret->toUIntPtr();
     if (!orig_context) {
         return;
@@ -87,7 +88,7 @@ static void retrace_glXCreateContext(trace::Call &call) {
     context_map[orig_context] = context;
 }
 
-static void retrace_glXCreateContextAttribsARB(trace::Call &call) {
+static void retrace_glXCreateContextAttribsARB(RetraceState *state, trace::Call &call) {
     unsigned long long orig_context = call.ret->toUIntPtr();
     if (!orig_context) {
         return;
@@ -102,7 +103,7 @@ static void retrace_glXCreateContextAttribsARB(trace::Call &call) {
     context_map[orig_context] = context;
 }
 
-static void retrace_glXMakeCurrent(trace::Call &call) {
+static void retrace_glXMakeCurrent(RetraceState *state, trace::Call &call) {
     bool ret = call.ret->toBool();
     if (!ret) {
         // If false is returned then any previously current rendering context
@@ -113,11 +114,11 @@ static void retrace_glXMakeCurrent(trace::Call &call) {
     glws::Drawable *new_drawable = getDrawable(call.arg(1).toUInt());
     Context *new_context = getContext(call.arg(2).toUIntPtr());
 
-    glretrace::makeCurrent(call, new_drawable, new_context);
+    glretrace::makeCurrent(state, call, new_drawable, new_context);
 }
 
 
-static void retrace_glXDestroyContext(trace::Call &call) {
+static void retrace_glXDestroyContext(RetraceState *state, trace::Call &call) {
     ContextMap::iterator it;
     it = context_map.find(call.arg(1).toUIntPtr());
     if (it == context_map.end()) {
@@ -129,7 +130,7 @@ static void retrace_glXDestroyContext(trace::Call &call) {
     context_map.erase(it);
 }
 
-static void retrace_glXCopySubBufferMESA(trace::Call &call) {
+static void retrace_glXCopySubBufferMESA(RetraceState *state, trace::Call &call) {
     glws::Drawable *drawable = getDrawable(call.arg(1).toUInt());
     int x = call.arg(2).toSInt();
     int y = call.arg(3).toSInt();
@@ -139,10 +140,10 @@ static void retrace_glXCopySubBufferMESA(trace::Call &call) {
     drawable->copySubBuffer(x, y, width, height);
 }
 
-static void retrace_glXSwapBuffers(trace::Call &call) {
+static void retrace_glXSwapBuffers(RetraceState *state, trace::Call &call) {
     glws::Drawable *drawable = getDrawable(call.arg(1).toUInt());
 
-    frame_complete(call);
+    frame_complete(state, call);
     if (retrace::doubleBuffer) {
         if (drawable) {
             drawable->swapBuffers();
@@ -152,7 +153,7 @@ static void retrace_glXSwapBuffers(trace::Call &call) {
     }
 }
 
-static void retrace_glXCreateNewContext(trace::Call &call) {
+static void retrace_glXCreateNewContext(RetraceState *state, trace::Call &call) {
     unsigned long long orig_context = call.ret->toUIntPtr();
     if (!orig_context) {
         return;
@@ -164,7 +165,7 @@ static void retrace_glXCreateNewContext(trace::Call &call) {
     context_map[orig_context] = context;
 }
 
-static void retrace_glXCreatePbuffer(trace::Call &call) {
+static void retrace_glXCreatePbuffer(RetraceState *state, trace::Call &call) {
     unsigned long long orig_drawable = call.ret->toUInt();
     if (!orig_drawable) {
         return;
@@ -179,7 +180,7 @@ static void retrace_glXCreatePbuffer(trace::Call &call) {
     drawable_map[orig_drawable] = drawable;
 }
 
-static void retrace_glXDestroyPbuffer(trace::Call &call) {
+static void retrace_glXDestroyPbuffer(RetraceState *state, trace::Call &call) {
     glws::Drawable *drawable = getDrawable(call.arg(1).toUInt());
 
     if (!drawable) {
@@ -189,7 +190,7 @@ static void retrace_glXDestroyPbuffer(trace::Call &call) {
     delete drawable;
 }
 
-static void retrace_glXMakeContextCurrent(trace::Call &call) {
+static void retrace_glXMakeContextCurrent(RetraceState *state, trace::Call &call) {
     bool ret = call.ret->toBool();
     if (!ret) {
         // If false is returned then any previously current rendering context
@@ -200,7 +201,7 @@ static void retrace_glXMakeContextCurrent(trace::Call &call) {
     glws::Drawable *new_drawable = getDrawable(call.arg(1).toUInt());
     Context *new_context = getContext(call.arg(3).toUIntPtr());
 
-    glretrace::makeCurrent(call, new_drawable, new_context);
+    glretrace::makeCurrent(state, call, new_drawable, new_context);
 }
 
 const retrace::Entry glretrace::glx_callbacks[] = {

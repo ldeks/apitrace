@@ -37,6 +37,7 @@
 #include "os_time.hpp"
 #include "os_memory.hpp"
 #include "highlight.hpp"
+#include "retrace_state.hpp"
 
 
 /* Synchronous debug output may reduce performance however,
@@ -44,6 +45,8 @@
  * as the callback may be called at any time.
  */
 #define DEBUG_OUTPUT_SYNCHRONOUS 0
+
+using retrace::RetraceState;
 
 namespace glretrace {
 
@@ -162,7 +165,7 @@ getCurrentRss(int64_t& rss) {
 }
 
 static void
-completeCallQuery(CallQuery& query) {
+completeCallQuery(RetraceState *state, CallQuery& query) {
     /* Get call start and duration */
     int64_t gpuStart = 0, gpuDuration = 0, cpuDuration = 0, pixels = 0, vsizeDuration = 0, rssDuration = 0;
 
@@ -207,13 +210,13 @@ completeCallQuery(CallQuery& query) {
     glDeleteQueries(NUM_QUERIES, query.ids);
 
     /* Add call to profile */
-    retrace::profiler.addCall(query.call, query.sig->name, query.program, pixels, gpuStart, gpuDuration, query.cpuStart, cpuDuration, query.vsizeStart, vsizeDuration, query.rssStart, rssDuration);
+    state->profiler.addCall(query.call, query.sig->name, query.program, pixels, gpuStart, gpuDuration, query.cpuStart, cpuDuration, query.vsizeStart, vsizeDuration, query.rssStart, rssDuration);
 }
 
 void
-flushQueries() {
+flushQueries(RetraceState *state) {
     for (std::list<CallQuery>::iterator itr = callQueries.begin(); itr != callQueries.end(); ++itr) {
-        completeCallQuery(*itr);
+        completeCallQuery(state, *itr);
     }
 
     callQueries.clear();
@@ -340,7 +343,7 @@ clientWaitSync(trace::Call &call, GLsync sync, GLbitfield flags, GLuint64 timeou
  * Called the first time a context is made current.
  */
 void
-initContext() {
+initContext(RetraceState *state) {
     glretrace::Context *currentContext = glretrace::getCurrentContext();
     assert(currentContext);
 
@@ -408,31 +411,31 @@ initContext() {
 
     /* Sync the gpu and cpu start times */
     if (retrace::profilingCpuTimes || retrace::profilingGpuTimes) {
-        if (!retrace::profiler.hasBaseTimes()) {
+        if (!state->profiler.hasBaseTimes()) {
             double cpuTimeScale = 1.0E9 / getTimeFrequency();
             GLint64 currentTime = getCurrentTime() * cpuTimeScale;
-            retrace::profiler.setBaseCpuTime(currentTime);
-            retrace::profiler.setBaseGpuTime(currentTime);
+            state->profiler.setBaseCpuTime(currentTime);
+            state->profiler.setBaseGpuTime(currentTime);
         }
     }
 
     if (retrace::profilingMemoryUsage) {
         GLint64 currentVsize, currentRss;
         getCurrentVsize(currentVsize);
-        retrace::profiler.setBaseVsizeUsage(currentVsize);
+        state->profiler.setBaseVsizeUsage(currentVsize);
         getCurrentRss(currentRss);
-        retrace::profiler.setBaseRssUsage(currentRss);
+        state->profiler.setBaseRssUsage(currentRss);
     }
 }
 
 void
-frame_complete(trace::Call &call) {
+frame_complete(RetraceState *state, trace::Call &call) {
     if (retrace::profiling) {
         /* Complete any remaining queries */
-        flushQueries();
+        flushQueries(state);
 
         /* Indicate end of current frame */
-        retrace::profiler.addFrameEnd();
+        state->profiler.addFrameEnd();
     }
 
     retrace::frameComplete(call);
@@ -656,10 +659,10 @@ retrace::addCallbacks(retrace::Retracer &retracer)
 
 
 void
-retrace::flushRendering(void) {
+retrace::flushRendering(RetraceState *state) {
     glretrace::Context *currentContext = glretrace::getCurrentContext();
     if (currentContext) {
-        glretrace::flushQueries();
+        glretrace::flushQueries(state);
     }
 }
 
@@ -672,8 +675,8 @@ retrace::finishRendering(void) {
 }
 
 void
-retrace::waitForInput(void) {
-    flushRendering();
+retrace::waitForInput(RetraceState *state) {
+    flushRendering(state);
     while (glws::processEvents()) {
         os::sleep(100*1000);
     }

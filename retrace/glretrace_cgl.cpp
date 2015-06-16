@@ -30,6 +30,7 @@
 #include "retrace.hpp"
 #include "retrace_swizzle.hpp"
 #include "glretrace.hpp"
+#include "retrace_state.hpp"
 
 
 #define kCGLNoError 0
@@ -83,7 +84,7 @@
 
 
 using namespace glretrace;
-
+using retrace::RetraceState;
 
 typedef std::map<unsigned long long, glws::Drawable *> DrawableMap;
 typedef std::map<unsigned long long, Context *> ContextMap;
@@ -144,7 +145,7 @@ getContext(unsigned long long ctx) {
 }
 
 
-static void retrace_CGLChoosePixelFormat(trace::Call &call) {
+static void retrace_CGLChoosePixelFormat(RetraceState *state, trace::Call &call) {
     if (call.ret->toUInt() != kCGLNoError) {
         return;
     }
@@ -255,7 +256,7 @@ static void retrace_CGLChoosePixelFormat(trace::Call &call) {
 }
 
 
-static void retrace_CGLDestroyPixelFormat(trace::Call &call) {
+static void retrace_CGLDestroyPixelFormat(RetraceState *state, trace::Call &call) {
     if (call.ret->toUInt() != kCGLNoError) {
         return;
     }
@@ -269,7 +270,7 @@ static void retrace_CGLDestroyPixelFormat(trace::Call &call) {
 }
 
 
-static void retrace_CGLCreateContext(trace::Call &call) {
+static void retrace_CGLCreateContext(RetraceState *state, trace::Call &call) {
     if (call.ret->toUInt() != kCGLNoError) {
         return;
     }
@@ -290,7 +291,7 @@ static void retrace_CGLCreateContext(trace::Call &call) {
 }
 
 
-static void retrace_CGLDestroyContext(trace::Call &call) {
+static void retrace_CGLDestroyContext(RetraceState *state, trace::Call &call) {
     if (call.ret->toUInt() != kCGLNoError) {
         return;
     }
@@ -309,7 +310,7 @@ static void retrace_CGLDestroyContext(trace::Call &call) {
 }
 
 
-static void retrace_CGLSetSurface(trace::Call &call) {
+static void retrace_CGLSetSurface(RetraceState *state, trace::Call &call) {
     if (call.ret->toUInt() != kCGLNoError) {
         return;
     }
@@ -330,7 +331,7 @@ static void retrace_CGLSetSurface(trace::Call &call) {
 }
 
 
-static void retrace_CGLClearDrawable(trace::Call &call) {
+static void retrace_CGLClearDrawable(RetraceState *state, trace::Call &call) {
     if (call.ret->toUInt() != kCGLNoError) {
         return;
     }
@@ -343,7 +344,7 @@ static void retrace_CGLClearDrawable(trace::Call &call) {
 }
 
 
-static void retrace_CGLSetCurrentContext(trace::Call &call) {
+static void retrace_CGLSetCurrentContext(RetraceState *state, trace::Call &call) {
     if (call.ret->toUInt() != kCGLNoError) {
         return;
     }
@@ -360,11 +361,11 @@ static void retrace_CGLSetCurrentContext(trace::Call &call) {
         new_drawable = new_context->drawable;
     }
 
-    glretrace::makeCurrent(call, new_drawable, new_context);
+    glretrace::makeCurrent(state, call, new_drawable, new_context);
 }
 
 
-static void retrace_CGLFlushDrawable(trace::Call &call) {
+static void retrace_CGLFlushDrawable(RetraceState *state, trace::Call &call) {
     if (call.ret->toUInt() != kCGLNoError) {
         return;
     }
@@ -380,7 +381,7 @@ static void retrace_CGLFlushDrawable(trace::Call &call) {
             } else {
                 glFlush();
             }
-            frame_complete(call);
+            frame_complete(state, call);
         } else {
             if (retrace::debug) {
                 retrace::warning(call) << "context has no drawable\n";
@@ -390,7 +391,7 @@ static void retrace_CGLFlushDrawable(trace::Call &call) {
 }
 
 
-static void retrace_CGLSetVirtualScreen(trace::Call &call) {
+static void retrace_CGLSetVirtualScreen(RetraceState *state, trace::Call &call) {
     if (call.ret->toUInt() != kCGLNoError) {
         return;
     }
@@ -410,7 +411,7 @@ static void retrace_CGLSetVirtualScreen(trace::Call &call) {
  * See also:
  * - /System/Library/Frameworks/OpenGL.framework/Headers/CGLIOSurface.h
  */
-static void retrace_CGLTexImageIOSurface2D(trace::Call &call) {
+static void retrace_CGLTexImageIOSurface2D(RetraceState *state, trace::Call &call) {
     if (call.ret->toUInt() != kCGLNoError) {
         return;
     }

@@ -43,6 +43,7 @@
 #include "trace_option.hpp"
 #include "retrace.hpp"
 #include "state_writer.hpp"
+#include "retrace_state.hpp"
 
 
 static bool waitOnFinish = false;
@@ -66,12 +67,12 @@ retrace::Retracer retracer;
 
 namespace retrace {
 
+static RetraceState state;
+//trace::Parser parser;
+//trace::Profiler profiler;
 
-trace::Parser parser;
-trace::Profiler profiler;
 
-
-int verbosity = 0;
+//int verbosity = 0;
 unsigned debug = 1;
 bool dumpingState = false;
 bool dumpingSnapshots = false;
@@ -187,7 +188,7 @@ takeSnapshot(unsigned call_no) {
             bool strip_alpha = true;
 
             if (src->writePNG(filename, strip_alpha) &&
-                retrace::verbosity >= 0) {
+                state.verbosity >= 0) {
                 std::cout << "Wrote " << filename << "\n";
             }
         }
@@ -229,7 +230,7 @@ retraceCall(trace::Call *call) {
         }
     }
 
-    retracer.retrace(*call);
+    retracer.retrace(&state, *call);
 
     if (doSnapshot) {
         if (!swapRenderTarget) {
@@ -386,18 +387,18 @@ public:
 
             if (loopCount && call->flags & trace::CALL_FLAG_END_FRAME) {
                 callEndsFrame = true;
-                parser.getBookmark(frameStart);
+                state.parser.getBookmark(frameStart);
             }
 
             retraceCall(call);
             delete call;
-            call = parser.parse_call();
+            call = state.parser.parse_call();
 
             /* Restart last frame if looping is requested. */
             if (loopCount) {
                 if (!call) {
-                    parser.setBookmark(lastFrameStart);
-                    call = parser.parse_call();
+                    state.parser.setBookmark(lastFrameStart);
+                    call = state.parser.parse_call();
                     if (loopCount > 0) {
                         --loopCount;
                     }
@@ -411,7 +412,7 @@ public:
         if (call) {
             /* Pass the baton */
             assert(call->thread_id != leg);
-            flushRendering();
+            flushRendering(&state);
             race->passBaton(call);
         } else {
             /* Reached the finish line */
@@ -506,7 +507,7 @@ RelayRace::getRunner(unsigned leg) {
 void
 RelayRace::run(void) {
     trace::Call *call;
-    call = parser.parse_call();
+    call = state.parser.parse_call();
     if (!call) {
         /* Nothing to do */
         return;
@@ -517,7 +518,7 @@ RelayRace::run(void) {
      * for a trace that has only one frame we need to get it at the
      * beginning. */
     if (loopCount) {
-        parser.getBookmark(lastFrameStart);
+        state.parser.getBookmark(lastFrameStart);
     }
 
     RelayRunner *foreRunner = getForeRunner();
@@ -583,7 +584,7 @@ mainLoop() {
 
     if (singleThread) {
         trace::Call *call;
-        while ((call = parser.parse_call())) {
+        while ((call = state.parser.parse_call())) {
             retraceCall(call);
             delete call;
         };
@@ -596,7 +597,7 @@ mainLoop() {
     long long endTime = os::getTime();
     float timeInterval = (endTime - startTime) * (1.0 / os::timeFrequency);
 
-    if ((retrace::verbosity >= -1) || (retrace::profiling)) {
+    if ((state.verbosity >= -1) || (retrace::profiling)) {
         std::cout << 
             "Rendered " << frameNo << " frames"
             " in " <<  timeInterval << " secs,"
@@ -604,7 +605,7 @@ mainLoop() {
     }
 
     if (waitOnFinish) {
-        waitForInput();
+        waitForInput(&state);
     } else {
         return;
     }
@@ -716,7 +717,7 @@ int main(int argc, char **argv)
             return 0;
         case 'b':
             retrace::debug = 0;
-            retrace::verbosity = -1;
+            state.verbosity = -1;
             break;
         case 'd':
             ++retrace::debug;
@@ -727,7 +728,7 @@ int main(int argc, char **argv)
         case 'D':
             dumpStateCallNo = atoi(optarg);
             dumpingState = true;
-            retrace::verbosity = -2;
+            state.verbosity = -2;
             break;
         case DUMP_FORMAT_OPT:
             if (strcasecmp(optarg, "json") == 0) {
@@ -777,7 +778,7 @@ int main(int argc, char **argv)
             }
             if (snapshotPrefix[0] == '-' && snapshotPrefix[1] == 0) {
                 os::setBinaryMode(stdout);
-                retrace::verbosity = -2;
+                state.verbosity = -2;
             } else {
                 /*
                  * Create the snapshot directory if it does not exist.
@@ -813,7 +814,7 @@ int main(int argc, char **argv)
             snapshotInterval = atoi(optarg);
             break;
         case 'v':
-            ++retrace::verbosity;
+            ++state.verbosity;
             break;
         case 'w':
             waitOnFinish = true;
@@ -824,28 +825,28 @@ int main(int argc, char **argv)
         case PGPU_OPT:
             retrace::debug = 0;
             retrace::profiling = true;
-            retrace::verbosity = -1;
+            state.verbosity = -1;
 
             retrace::profilingGpuTimes = true;
             break;
         case PCPU_OPT:
             retrace::debug = 0;
             retrace::profiling = true;
-            retrace::verbosity = -1;
+            state.verbosity = -1;
 
             retrace::profilingCpuTimes = true;
             break;
         case PPD_OPT:
             retrace::debug = 0;
             retrace::profiling = true;
-            retrace::verbosity = -1;
+            state.verbosity = -1;
 
             retrace::profilingPixelsDrawn = true;
             break;
         case PMEM_OPT:
             retrace::debug = 0;
             retrace::profiling = true;
-            retrace::verbosity = -1;
+            state.verbosity = -1;
 
             retrace::profilingMemoryUsage = true;
             break;
@@ -874,19 +875,19 @@ int main(int argc, char **argv)
 
     retrace::setUp();
     if (retrace::profiling) {
-        retrace::profiler.setup(retrace::profilingCpuTimes, retrace::profilingGpuTimes, retrace::profilingPixelsDrawn, retrace::profilingMemoryUsage);
+        state.profiler.setup(retrace::profilingCpuTimes, retrace::profilingGpuTimes, retrace::profilingPixelsDrawn, retrace::profilingMemoryUsage);
     }
 
     os::setExceptionCallback(exceptionCallback);
 
     for (i = optind; i < argc; ++i) {
-        if (!retrace::parser.open(argv[i])) {
+        if (!state.parser.open(argv[i])) {
             return 1;
         }
 
         retrace::mainLoop();
 
-        retrace::parser.close();
+        state.parser.close();
     }
     
     os::resetExceptionCallback();

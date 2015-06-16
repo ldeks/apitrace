@@ -343,7 +343,7 @@ class SwizzledValueRegistrator(stdapi.Visitor, stdapi.ExpanderMixin):
 class Retracer:
 
     def retraceFunction(self, function):
-        print 'static void retrace_%s(trace::Call &call) {' % function.name
+        print 'static void retrace_%s(RetraceState *state, trace::Call &call) {' % function.name
         self.retraceFunctionBody(function)
         print '}'
         print
@@ -444,7 +444,7 @@ class Retracer:
 
     def failFunction(self, function):
         print '    if (retrace::verbosity >= 0) {'
-        print '        retrace::unsupported(call);'
+        print '        retrace::unsupported(state, call);'
         print '    }'
         print '    return;'
 
@@ -556,6 +556,8 @@ class Retracer:
         print '#include "trace_parser.hpp"'
         print '#include "retrace.hpp"'
         print '#include "retrace_swizzle.hpp"'
+        print '#include "retrace_state.hpp"'
+        print 'using retrace::RetraceState;'
         print
 
         types = api.getAllTypes()

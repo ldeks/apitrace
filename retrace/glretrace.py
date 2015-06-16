@@ -127,7 +127,7 @@ class GlRetracer(Retracer):
 
         # For backwards compatibility with old traces where non VBO drawing was supported
         if (is_array_pointer or is_draw_arrays or is_draw_elements) and not is_draw_indirect:
-            print '    if (retrace::parser.version < 1) {'
+            print '    if (state->parser.version < 1) {'
 
             if is_array_pointer or is_draw_arrays:
                 print '        GLint _array_buffer = 0;'
@@ -159,7 +159,7 @@ class GlRetracer(Retracer):
         if function.name == 'glStringMarkerGREMEDY':
             return
         if function.name == 'glFrameTerminatorGREMEDY':
-            print '    glretrace::frame_complete(call);'
+            print '    glretrace::frame_complete(state, call);'
             return
 
         Retracer.retraceFunctionBody(self, function)
@@ -167,7 +167,7 @@ class GlRetracer(Retracer):
         # Post-snapshots
         if function.name in ('glFlush', 'glFinish'):
             print '    if (!retrace::doubleBuffer) {'
-            print '        glretrace::frame_complete(call);'
+            print '        glretrace::frame_complete(state, call);'
             print '    }'
         if is_draw_arrays or is_draw_elements or is_misc_draw:
             print '    assert(call.flags & trace::CALL_FLAG_RENDER);'

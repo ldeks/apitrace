@@ -32,9 +32,11 @@
 
 #include "retrace.hpp"
 #include "retrace_swizzle.hpp"
+#include "retrace_state.hpp"
 
+using retrace::RetraceState;
 
-static void retrace_malloc(trace::Call &call) {
+static void retrace_malloc(RetraceState *state, trace::Call &call) {
     size_t size = call.arg(0).toUInt();
     unsigned long long address = call.ret->toUIntPtr();
 
@@ -48,11 +50,11 @@ static void retrace_malloc(trace::Call &call) {
         return;
     }
 
-    retrace::addRegion(call, address, buffer, size);
+    retrace::addRegion(state, call, address, buffer, size);
 }
 
 
-static void retrace_memcpy(trace::Call &call) {
+static void retrace_memcpy(RetraceState *state, trace::Call &call) {
     void * destPtr;
     size_t destLen;
     retrace::toRange(call.arg(0), destPtr, destLen);

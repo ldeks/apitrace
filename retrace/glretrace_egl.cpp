@@ -33,6 +33,7 @@
 #include "glretrace.hpp"
 #include "os.hpp"
 #include "eglsize.hpp"
+#include "retrace_state.hpp"
 
 #ifndef EGL_OPENGL_ES_API
 #define EGL_OPENGL_ES_API		0x30A0
@@ -43,6 +44,7 @@
 
 
 using namespace glretrace;
+using retrace::RetraceState;
 
 
 typedef std::map<unsigned long long, glws::Drawable *> DrawableMap;
@@ -118,7 +120,7 @@ static void createDrawable(unsigned long long orig_config, unsigned long long or
     drawable_map[orig_surface] = drawable;
 }
 
-static void retrace_eglChooseConfig(trace::Call &call) {
+static void retrace_eglChooseConfig(RetraceState *state, trace::Call &call) {
     if (!call.ret->toSInt()) {
         return;
     }
@@ -153,20 +155,20 @@ static void retrace_eglChooseConfig(trace::Call &call) {
     }
 }
 
-static void retrace_eglCreateWindowSurface(trace::Call &call) {
+static void retrace_eglCreateWindowSurface(RetraceState *state, trace::Call &call) {
     unsigned long long orig_config = call.arg(1).toUIntPtr();
     unsigned long long orig_surface = call.ret->toUIntPtr();
     createDrawable(orig_config, orig_surface);
 }
 
-static void retrace_eglCreatePbufferSurface(trace::Call &call) {
+static void retrace_eglCreatePbufferSurface(RetraceState *state, trace::Call &call) {
     unsigned long long orig_config = call.arg(1).toUIntPtr();
     unsigned long long orig_surface = call.ret->toUIntPtr();
     createDrawable(orig_config, orig_surface);
     // TODO: Respect the pbuffer dimensions too
 }
 
-static void retrace_eglDestroySurface(trace::Call &call) {
+static void retrace_eglDestroySurface(RetraceState *state, trace::Call &call) {
     unsigned long long orig_surface = call.arg(1).toUIntPtr();
 
     DrawableMap::iterator it;
@@ -182,7 +184,7 @@ static void retrace_eglDestroySurface(trace::Call &call) {
     }
 }
 
-static void retrace_eglBindAPI(trace::Call &call) {
+static void retrace_eglBindAPI(RetraceState *state, trace::Call &call) {
     if (!call.ret->toBool()) {
         return;
     }
@@ -190,7 +192,7 @@ static void retrace_eglBindAPI(trace::Call &call) {
     current_api = call.arg(0).toUInt();
 }
 
-static void retrace_eglCreateContext(trace::Call &call) {
+static void retrace_eglCreateContext(RetraceState *state, trace::Call &call) {
     unsigned long long orig_context = call.ret->toUIntPtr();
     unsigned long long orig_config = call.arg(1).toUIntPtr();
     Context *share_context = getContext(call.arg(2).toUIntPtr());
@@ -230,7 +232,7 @@ static void retrace_eglCreateContext(trace::Call &call) {
     last_profile = profile;
 }
 
-static void retrace_eglDestroyContext(trace::Call &call) {
+static void retrace_eglDestroyContext(RetraceState *state, trace::Call &call) {
     unsigned long long orig_context = call.arg(1).toUIntPtr();
 
     ContextMap::iterator it;
@@ -246,7 +248,7 @@ static void retrace_eglDestroyContext(trace::Call &call) {
     }
 }
 
-static void retrace_eglMakeCurrent(trace::Call &call) {
+static void retrace_eglMakeCurrent(RetraceState *state, trace::Call &call) {
     if (!call.ret->toSInt()) {
         // Previously current rendering context and surfaces (if any) remain
         // unchanged.
@@ -264,14 +266,14 @@ static void retrace_eglMakeCurrent(trace::Call &call) {
         new_drawable = null_drawable;
     }
 
-    glretrace::makeCurrent(call, new_drawable, new_context);
+    glretrace::makeCurrent(state, call, new_drawable, new_context);
 }
 
 
-static void retrace_eglSwapBuffers(trace::Call &call) {
+static void retrace_eglSwapBuffers(RetraceState *state, trace::Call &call) {
     glws::Drawable *drawable = getDrawable(call.arg(1).toUIntPtr());
 
-    frame_complete(call);
+    frame_complete(state, call);
 
     if (retrace::doubleBuffer) {
         if (drawable) {

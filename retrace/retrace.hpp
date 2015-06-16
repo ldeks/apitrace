@@ -59,6 +59,7 @@ namespace retrace {
 extern trace::Parser parser;
 extern trace::Profiler profiler;
 
+class RetraceState;
 
 class ScopedAllocator : public ::ScopedAllocator
 {
@@ -157,11 +158,11 @@ void failed(trace::Call &call, HRESULT hr);
 
 void checkMismatch(trace::Call &call, const char *expr, trace::Value *traceValue, long actualValue);
 
-void ignore(trace::Call &call);
-void unsupported(trace::Call &call);
+void ignore(retrace::RetraceState *state, trace::Call &call);
+void unsupported(retrace::RetraceState *state, trace::Call &call);
 
 
-typedef void (*Callback)(trace::Call &call);
+typedef void (*Callback)(retrace::RetraceState *state, trace::Call &call);
 
 struct Entry {
     const char *name;
@@ -196,7 +197,7 @@ public:
     void addCallback(const Entry *entry);
     void addCallbacks(const Entry *entries);
 
-    void retrace(trace::Call &call);
+    void retrace(RetraceState *retraceState, trace::Call &call);
 };
 
 
@@ -234,7 +235,7 @@ frameComplete(trace::Call &call);
  * Flush rendering (called when switching threads).
  */
 void
-flushRendering(void);
+flushRendering(retrace::RetraceState *state);
 
 /**
  * Finish rendering (called before exiting.)
@@ -243,7 +244,7 @@ void
 finishRendering(void);
 
 void
-waitForInput(void);
+waitForInput(retrace::RetraceState *state);
 
 void
 cleanUp(void);
