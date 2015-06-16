@@ -59,6 +59,7 @@ endif ()
 
 
 add_library (glretrace_common STATIC
+    retrace_state.cpp
     glretrace_gl.cpp
     glretrace_cgl.cpp
     glretrace_glx.cpp
@@ -72,7 +73,7 @@ add_library (glretrace_common STATIC
     glstate_params.cpp
     glstate_shaders.cpp
     glws.cpp
-)
+    )
 add_dependencies (glretrace_common glproc)
 target_link_libraries (glretrace_common
     retrace_common
