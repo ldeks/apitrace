@@ -346,8 +346,11 @@ StateTrack::useProgram(const std::string &vs,
     GlFunctions::ShaderSource(vsid, 1, &vsstr, &len);
     GL_CHECK();
     GlFunctions::CompileShader(vsid);
-    GetCompileError(vsid, message);
-    if (message->size() > 0) {
+    const int error = GlFunctions::GetError();
+    if (GL_NO_ERROR != error) {
+      if (message) {
+        GetCompileError(vsid, message);
+      }
       return -1;
     }
     GL_CHECK();
@@ -368,8 +371,10 @@ StateTrack::useProgram(const std::string &vs,
     GlFunctions::CompileShader(fsid);
     const int error = GlFunctions::GetError();
     if (GL_NO_ERROR != error) {
-      GetCompileError(fsid, message);
-      GRLOGF(WARN, "compile error: %s", message->c_str());
+      if (message) {
+        GetCompileError(fsid, message);
+        GRLOGF(WARN, "compile error: %s", message->c_str());
+      }
       return -1;
     }
     GL_CHECK();
