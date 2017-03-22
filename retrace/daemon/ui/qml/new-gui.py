@@ -1,7 +1,7 @@
 #!/usr/bin/python3.5
 
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
+from PyQt5.QtWidgets import (QApplication, QDialog, QWidget, QVBoxLayout,
                              QGridLayout, QLabel, QLineEdit, QCompleter,
                              QDirModel, QSizePolicy, QToolButton,
                              QFileDialog, QSpinBox, QDialogButtonBox)
@@ -9,7 +9,7 @@ from PyQt5.QtCore import (Qt, QObject, pyqtSignal, QSize,
                           QCoreApplication, QRect)
 from PyQt5.QtGui import QIcon, QFont, QPixmap
 
-class MainWindow(QMainWindow):
+class OpenDialog(QDialog):
 
     def __init__(self):
         super().__init__()
@@ -18,9 +18,7 @@ class MainWindow(QMainWindow):
 
     def initUI(self):
 
-        # Create a placeholder widget for the layout
-        self.centralWidget = QWidget(self)
-        self.layout = QVBoxLayout(self.centralWidget)
+        self.layout = QVBoxLayout(self)
 
         # Image View
         self.view = ImageView()
@@ -73,7 +71,6 @@ class MainWindow(QMainWindow):
 
         # Dialog bottom.
         self.layout.addWidget(self.controls)
-        #self.layout.addWidget(VSpacer())
         self.dialogButtons = QDialogButtonBox(QDialogButtonBox.Ok |
                                               QDialogButtonBox.Cancel)
         self.dialogButtons.rejected.connect(QCoreApplication.instance().quit)
@@ -82,8 +79,6 @@ class MainWindow(QMainWindow):
 
 
         # Window finalization
-        self.setCentralWidget(self.centralWidget)
-        self.statusBar().showMessage('Ready')
         self.setGeometry(300, 300, 600, 500)
         self.setWindowTitle('Frame Retrace Mock-Up GUI')
         self.show()
@@ -135,5 +130,5 @@ class HSpacer(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    mwindow = MainWindow()
+    openDialog = OpenDialog()
     sys.exit(app.exec_())
