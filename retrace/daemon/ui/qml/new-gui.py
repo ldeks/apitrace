@@ -1,15 +1,13 @@
 #!/usr/bin/python3.5
 
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QActionGroup,
-                             QFontComboBox, QComboBox, QWidget, QVBoxLayout,
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QGridLayout, QLabel, QLineEdit, QCompleter,
                              QDirModel, QSizePolicy, QToolButton,
                              QFileDialog, QSpinBox, QDialogButtonBox)
-from PyQt5.QtCore import (Qt, QUrl, QObject, pyqtSignal, QSize,
-                          QCoreApplication)
-from PyQt5.QtQuick import QQuickView
-from PyQt5.QtGui import QFontDatabase, QIcon, QFont
+from PyQt5.QtCore import (Qt, QObject, pyqtSignal, QSize,
+                          QCoreApplication, QRect)
+from PyQt5.QtGui import QIcon, QFont, QPixmap
 
 class MainWindow(QMainWindow):
 
@@ -24,14 +22,9 @@ class MainWindow(QMainWindow):
         self.centralWidget = QWidget(self)
         self.layout = QVBoxLayout(self.centralWidget)
 
-        # Image View (in Quick)
+        # Image View
         self.view = ImageView()
-        self.view.statusChanged.connect(self.quickViewStatusChanged)
-        self.view.sceneGraphError.connect(self.sceneGraphError)
-        self.container = QWidget.createWindowContainer(self.view)
-        self.container.setMinimumSize(self.view.size())
-        self.container.setFocusPolicy(Qt.TabFocus)
-        self.layout.addWidget(self.container)
+        self.layout.addWidget(self.view)
 
         # Controls area
         self.controls = QWidget(self)
@@ -80,7 +73,7 @@ class MainWindow(QMainWindow):
 
         # Dialog bottom.
         self.layout.addWidget(self.controls)
-        self.layout.addWidget(VSpacer())
+        #self.layout.addWidget(VSpacer())
         self.dialogButtons = QDialogButtonBox(QDialogButtonBox.Ok |
                                               QDialogButtonBox.Cancel)
         self.dialogButtons.rejected.connect(QCoreApplication.instance().quit)
@@ -95,18 +88,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Frame Retrace Mock-Up GUI')
         self.show()
 
-
-    def quickViewStatusChanged(status):
-        if status is QQuickView.Error:
-            errors = []
-            for error in self.quickView.errors():
-                errors.append(str(error))
-            self.statusBar().showmessage((', ').join(errors))
-
-
-    def sceneGraphError(error, message):
-        self.statusBar.showMessage(message)
-
     def getFilename(self):
         currentFname = self.controls.lineEdit.text()
         if currentFname == '':
@@ -119,17 +100,22 @@ class MainWindow(QMainWindow):
         self.hide()
 
 
-class ImageView(QQuickView):
+class ImageView(QLabel):
 
     def __init__(self):
         super().__init__()
 
         self.initUI()
 
-
     def initUI(self):
-        self.setResizeMode(QQuickView.SizeRootObjectToView)
-        self.setSource(QUrl("imagebox.qml"))
+        self.pixmap = QPixmap("images/retracer_logo.png")
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.setAlignment(Qt.AlignCenter)
+        self.setPixmap(self.pixmap.scaled(self.size(), Qt.KeepAspectRatio,
+                                          Qt.SmoothTransformation))
+    def resizeEvent(self, event):
+        self.setPixmap(self.pixmap.scaled(self.size(), Qt.KeepAspectRatio,
+                                          Qt.SmoothTransformation))
 
 class VSpacer(QWidget):
 
