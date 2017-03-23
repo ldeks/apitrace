@@ -5,7 +5,8 @@ from PyQt5.QtWidgets import (QApplication, QDialog, QWidget, QVBoxLayout,
                              QGridLayout, QLabel, QLineEdit, QCompleter,
                              QDirModel, QSizePolicy, QToolButton,
                              QFileDialog, QSpinBox, QDialogButtonBox,
-                             QMainWindow)
+                             QMainWindow, QGraphicsBlurEffect, QComboBox,
+                             QTabWidget)
 from PyQt5.QtCore import (Qt, QObject, pyqtSignal, QSize, QUrl,
                           QCoreApplication, QRect)
 from PyQt5.QtQuick import QQuickView
@@ -76,7 +77,7 @@ class OpenDialog(QDialog):
         self.dialogButtons = QDialogButtonBox(QDialogButtonBox.Cancel |
                                               QDialogButtonBox.Ok)
         self.dialogButtons.rejected.connect(QCoreApplication.instance().quit)
-        self.dialogButtons.accepted.connect(self.accepted)
+        self.dialogButtons.accepted.connect(self.openFile)
         self.layout.addWidget(self.dialogButtons)
 
 
@@ -96,6 +97,10 @@ class OpenDialog(QDialog):
         if (fname[0] != ''):
             self.controls.lineEdit.setText(fname[0])
 
+    def openFile(self):
+        # No-op for now.
+        self.close()
+
 
 class ImageView(QLabel):
 
@@ -110,9 +115,19 @@ class ImageView(QLabel):
         self.setAlignment(Qt.AlignCenter)
         self.setPixmap(self.pixmap.scaled(self.size(), Qt.KeepAspectRatio,
                                           Qt.SmoothTransformation))
+        self.blurred = False
+
     def resizeEvent(self, event):
         self.setPixmap(self.pixmap.scaled(self.size(), Qt.KeepAspectRatio,
                                           Qt.SmoothTransformation))
+
+    def mousePressEvent(self, event):
+        if self.blurred is False:
+            self.setGraphicsEffect(QGraphicsBlurEffect())
+            self.blurred = True
+        else:
+            self.setGraphicsEffect(None)
+            self.blurred = False
 
 class VSpacer(QWidget):
 
@@ -154,7 +169,46 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.centralWidget)
 
-        self.layout.addWidget(VSpacer())
+        # Tool bar
+        self.toolbar = self.addToolBar("Graph Controls")
+        self.toolbar.setMovable(False)
+        self.toolbar.ylabel = QLabel("Vertical Metric:", self)
+        self.toolbar.ylabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.toolbar.xlabel = QLabel("Horizontal Metric:", self)
+        self.toolbar.xlabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.toolbar.metrics = ["No Metric", "Pixel Shader Active Time",
+                                "Fragment Shader Active Time"]
+        self.toolbar.xComboBox = QComboBox(self)
+        self.toolbar.xComboBox.addItems(self.toolbar.metrics)
+        self.toolbar.yComboBox = QComboBox(self)
+        self.toolbar.yComboBox.addItems(self.toolbar.metrics)
+
+        self.toolbar.filterLabel = QLabel("Metrics Filter:", self)
+        self.toolbar.filterLabel.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.toolbar.filter = QLineEdit(self)
+        self.toolbar.filterCompleter = QCompleter(
+            self.splitStringList(self.toolbar.metrics), self.toolbar.filter)
+        self.toolbar.filterCompleter.setCompletionMode(
+            QCompleter.UnfilteredPopupCompletion)
+        self.toolbar.filter.setCompleter(self.toolbar.filterCompleter)
+
+        self.toolbar.addWidget(self.toolbar.filterLabel)
+        self.toolbar.addWidget(self.toolbar.filter)
+        self.toolbar.addWidget(HSpacer())
+        self.toolbar.addWidget(self.toolbar.ylabel)
+        self.toolbar.addWidget(self.toolbar.yComboBox)
+        self.toolbar.addWidget(self.toolbar.xlabel)
+        self.toolbar.addWidget(self.toolbar.xComboBox)
+
+        # Tab Widget
+        self.tabs = QTabWidget(self)
+        self.tabs.addTab(QWidget(), "Shaders")
+        self.tabs.addTab(QWidget(), "RenderTarget")
+        self.tabs.addTab(QWidget(), "API Calls")
+        self.tabs.addTab(QWidget(), "Metrics")
+        self.layout.addWidget(self.tabs)
+
+        #self.layout.addWidget(VSpacer())
 
         # Window finalization.
         screenGeometry = QGuiApplication.primaryScreen().geometry()
@@ -173,6 +227,14 @@ class MainWindow(QMainWindow):
 
     def sceneGraphError(error, message):
         self.statusBar.showMessage(message)
+
+    def splitStringList(self, strlist):
+        newlist = []
+        for item in strlist:
+            sublist = item.split(' ')
+            for subitem in sublist:
+                newlist.append(subitem)
+        return newlist
 
 
 class GraphView(QQuickView):
