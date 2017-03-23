@@ -4,15 +4,17 @@ import sys
 from PyQt5.QtWidgets import (QApplication, QDialog, QWidget, QVBoxLayout,
                              QGridLayout, QLabel, QLineEdit, QCompleter,
                              QDirModel, QSizePolicy, QToolButton,
-                             QFileDialog, QSpinBox, QDialogButtonBox)
-from PyQt5.QtCore import (Qt, QObject, pyqtSignal, QSize,
+                             QFileDialog, QSpinBox, QDialogButtonBox,
+                             QMainWindow)
+from PyQt5.QtCore import (Qt, QObject, pyqtSignal, QSize, QUrl,
                           QCoreApplication, QRect)
-from PyQt5.QtGui import QIcon, QFont, QPixmap
+from PyQt5.QtQuick import QQuickView
+from PyQt5.QtGui import QIcon, QFont, QPixmap, QGuiApplication
 
 class OpenDialog(QDialog):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
 
         self.initUI()
 
@@ -71,16 +73,17 @@ class OpenDialog(QDialog):
 
         # Dialog bottom.
         self.layout.addWidget(self.controls)
-        self.dialogButtons = QDialogButtonBox(QDialogButtonBox.Ok |
-                                              QDialogButtonBox.Cancel)
+        self.dialogButtons = QDialogButtonBox(QDialogButtonBox.Cancel |
+                                              QDialogButtonBox.Ok)
         self.dialogButtons.rejected.connect(QCoreApplication.instance().quit)
-        self.dialogButtons.accepted.connect(self.openFile)
+        self.dialogButtons.accepted.connect(self.accepted)
         self.layout.addWidget(self.dialogButtons)
 
 
         # Window finalization
         self.setGeometry(300, 300, 600, 500)
         self.setWindowTitle('Frame Retrace Mock-Up GUI')
+        self.setModal(True) # defer to main gui.
         self.show()
 
     def getFilename(self):
@@ -89,10 +92,9 @@ class OpenDialog(QDialog):
             currentFname = "/home"
         fname = QFileDialog.getOpenFileName(self, "Open File", currentFname,
                                                   "Trace files (*.trace)")
-        self.controls.lineEdit.setText(fname[0])
-
-    def openFile(self):
-        self.hide()
+        # If user presses cancel, string will be null
+        if (fname[0] != ''):
+            self.controls.lineEdit.setText(fname[0])
 
 
 class ImageView(QLabel):
@@ -127,8 +129,68 @@ class HSpacer(QWidget):
         self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Maximum)
 
 
+class MainWindow(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+
+        self.initUI()
+
+    def initUI(self):
+
+        # Placeholder widget for central widget
+        self.centralWidget = QWidget(self)
+        self.layout = QVBoxLayout(self.centralWidget)
+
+        # Hook up quickview
+        self.graph = GraphView()
+        self.graph.statusChanged.connect(self.quickViewStatusChanged)
+        self.graph.sceneGraphError.connect(self.sceneGraphError)
+
+        self.container = QWidget.createWindowContainer(self.graph)
+        self.container.setMinimumSize(self.graph.size())
+        self.container.setFocusPolicy(Qt.TabFocus)
+        self.layout.addWidget(self.container)
+
+        self.setCentralWidget(self.centralWidget)
+
+        self.layout.addWidget(VSpacer())
+
+        # Window finalization.
+        screenGeometry = QGuiApplication.primaryScreen().geometry()
+        screenGeometry.moveTo(0, 0)
+        self.setGeometry(screenGeometry)
+        self.setWindowTitle('Frame Retrace Mock-Up GUI')
+        self.statusBar().showMessage("Ready")
+
+    def quickViewStatusChanged(status):
+        if status is QQuickView.Error:
+            errors = []
+            for error in self.quickView.errors():
+                errors.append(str(error))
+            self.statusBar().showmessage((', ').join(errors))
+
+
+    def sceneGraphError(error, message):
+        self.statusBar.showMessage(message)
+
+
+class GraphView(QQuickView):
+
+    def __init__(self):
+        super().__init__()
+
+        self.initUI()
+
+    def initUI(self):
+        self.setResizeMode(QQuickView.SizeRootObjectToView)
+        self.setSource(QUrl("imagebox.qml"))
+
+
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    openDialog = OpenDialog()
+    mwindow = MainWindow()
+    mwindow.show()
+    openDialog = OpenDialog(mwindow)
     sys.exit(app.exec_())
