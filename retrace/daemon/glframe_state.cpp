@@ -38,6 +38,7 @@
 #include "glframe_glhelper.hpp"
 #include "glframe_logger.hpp"
 #include "glframe_retrace_interface.hpp"
+#include "glframe_uniforms.hpp"
 #include "glretrace.hpp"
 #include "retrace.hpp"
 #include "trace_model.hpp"
@@ -49,6 +50,7 @@ using glretrace::OnFrameRetrace;
 using glretrace::ShaderAssembly;
 using glretrace::ShaderType;
 using glretrace::AssemblyType;
+using glretrace::Uniforms;
 using trace::Call;
 using trace::Array;
 
@@ -59,7 +61,8 @@ StateTrack::TrackMap StateTrack::lookup;
 StateTrack::StateTrack(OutputPoller *p)
     : m_poller(p),
       current_program(0),
-      current_context(0) {
+      current_context(0),
+      empty_shader() {
 }
 
 StateTrack::TrackMap::TrackMap() {
@@ -74,6 +77,7 @@ StateTrack::TrackMap::TrackMap() {
   lookup["glGetUniformLocation"] = &StateTrack::trackGetUniformLocation;
   lookup["glGetUniformBlockIndex"] = &StateTrack::trackGetUniformBlockIndex;
   lookup["glUniformBlockBinding"] = &StateTrack::trackUniformBlockBinding;
+  lookup["glBindFragDataLocation"] = &StateTrack::trackBindFragDataLocation;
 }
 
 bool
@@ -108,12 +112,19 @@ StateTrack::track(const Call &call) {
     trace::dump(const_cast<Call&>(call), call_stream,
                 trace::DUMP_FLAG_NO_COLOR);
     GRLOG(glretrace::DEBUG, call_stream.str().c_str());
+#ifdef WIN32
+    // windows parsing of shader assemblies is extremely slow
+    parse();
+#endif
   }
 
   if (changesContext(call))
     current_context = getContext(call);
 
+#ifndef WIN32
+  // on Linux we can parse for shader assembly data on every call.
   parse();
+#endif
 }
 
 void
@@ -567,6 +578,11 @@ StateTrack::useProgram(int orig_retraced_program,
     GlFunctions::BindAttribLocation(pid, binding.first, binding.second.c_str());
   }
 
+  for (auto &binding : m_program_to_frag_data_location[orig_retraced_program]) {
+    GlFunctions::BindFragDataLocation(pid, binding.second,
+                                      binding.first.c_str());
+  }
+
   GlFunctions::LinkProgram(pid);
   GL_CHECK();
   if (message) {
@@ -602,6 +618,16 @@ StateTrack::useProgram(int orig_retraced_program,
     GlFunctions::UniformBlockBinding(pid, index,
                                      binding);
   }
+
+  // set initial uniform state for program, based on the original.
+  // Some game titles partially initialize uniforms at link time.
+  int cur_prog;
+  GlFunctions::GetIntegerv(GL_CURRENT_PROGRAM, &cur_prog);
+  GlFunctions::UseProgram(orig_retraced_program);
+  Uniforms orig;
+  GlFunctions::UseProgram(pid);
+  orig.set();
+  GlFunctions::UseProgram(cur_prog);
 
   return pid;
 }
@@ -729,6 +755,15 @@ StateTrack::trackUniformBlockBinding(const trace::Call &call) {
 
   const int binding = call.args[2].value->toDouble();
   m_program_to_uniform_block_binding[program][retraced_index] = binding;
+}
+
+void
+StateTrack::trackBindFragDataLocation(const trace::Call &call) {
+  const int call_program = call.args[0].value->toDouble();
+  const int program = glretrace::getRetracedProgram(call_program);
+  const int call_location = call.args[1].value->toDouble();
+  const std::string name(call.args[2].value->toString());
+  m_program_to_frag_data_location[program][name] = call_location;
 }
 
 void

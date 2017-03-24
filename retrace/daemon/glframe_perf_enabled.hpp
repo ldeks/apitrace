@@ -1,6 +1,6 @@
 /**************************************************************************
  *
- * Copyright 2015 Intel Corporation
+ * Copyright 2017 Intel Corporation
  * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,41 +25,19 @@
  *   Mark Janes <mark.a.janes@intel.com>
  **************************************************************************/
 
-#include <string>
-#include <vector>
-#include "glframe_state.hpp"
+#ifndef _GLFRAME_PERF_ENABLED_HPP__
+#define _GLFRAME_PERF_ENABLED_HPP__
 
 namespace glretrace {
 
-class StdErrRedirect : public OutputPoller {
- public:
-  StdErrRedirect();
-  void poll(int current_program, StateTrack *cb);
-  ~StdErrRedirect();
-  void init();
+bool perf_enabled();
 
- private:
-  int out_pipe[2];
-  std::vector<char> buf;
-};
-
-class NoRedirect : public OutputPoller {
- public:
-  NoRedirect() {}
-  void poll(int, StateTrack *) {}
-  ~NoRedirect() {}
-  void init() {}
-};
-
-class WinShaders : public OutputPoller {
- public:
-  WinShaders() {}
-  void poll(int current_program, StateTrack *cb);
-  ~WinShaders() {}
-  void init();
- private:
-  std::string m_dump_dir;
-  std::string m_dump_pattern;
-};
+#ifdef WIN32
+inline bool perf_enabled() {
+  return true;
+}
+#endif
 
 }  // namespace glretrace
+
+#endif  // _GLFRAME_PERF_ENABLED_HPP__

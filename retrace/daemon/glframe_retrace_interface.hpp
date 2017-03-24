@@ -75,7 +75,7 @@ class RenderId {
  public:
   RenderId() : value(0) {}
   explicit RenderId(uint32_t renderNumber) {
-    if (renderNumber == -1)
+    if (renderNumber == (uint32_t)-1)
       // -1 renderId means "no render".  This id addresses, for
       // -example, tracked state up to the point where the frame
       // -begins.
@@ -211,7 +211,7 @@ class OnFrameRetrace {
   typedef std::vector<unsigned char> uvec;
   virtual void onFileOpening(bool needUpload,
                              bool finished,
-                             uint32_t percent_complete) = 0;
+                             uint32_t frame_count) = 0;
   virtual void onShaderAssembly(RenderId renderId,
                                 SelectionId selectionCount,
                                 const ShaderAssembly &vertex,

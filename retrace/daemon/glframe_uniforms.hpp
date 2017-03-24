@@ -1,6 +1,6 @@
 /**************************************************************************
  *
- * Copyright 2015 Intel Corporation
+ * Copyright 2017 Intel Corporation
  * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,41 +25,26 @@
  *   Mark Janes <mark.a.janes@intel.com>
  **************************************************************************/
 
+#ifndef _GLFRAME_UNIFORMS_HPP_
+#define _GLFRAME_UNIFORMS_HPP_
+
 #include <string>
 #include <vector>
-#include "glframe_state.hpp"
 
 namespace glretrace {
 
-class StdErrRedirect : public OutputPoller {
+class Uniform;
+class Uniforms {
+  // Holds all uniform constants at a specified render.  Enables
+  // uniform handling during shader replacement, and setting uniform
+  // values for IFrameRetrace::setUniforms
  public:
-  StdErrRedirect();
-  void poll(int current_program, StateTrack *cb);
-  ~StdErrRedirect();
-  void init();
-
+  Uniforms();
+  ~Uniforms();
+  void set() const;
  private:
-  int out_pipe[2];
-  std::vector<char> buf;
+  std::vector<Uniform*> m_uniforms;
 };
-
-class NoRedirect : public OutputPoller {
- public:
-  NoRedirect() {}
-  void poll(int, StateTrack *) {}
-  ~NoRedirect() {}
-  void init() {}
-};
-
-class WinShaders : public OutputPoller {
- public:
-  WinShaders() {}
-  void poll(int current_program, StateTrack *cb);
-  ~WinShaders() {}
-  void init();
- private:
-  std::string m_dump_dir;
-  std::string m_dump_pattern;
-};
-
 }  // namespace glretrace
+
+#endif  // _GLFRAME_UNIFORMS_HPP_

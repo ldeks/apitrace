@@ -38,6 +38,7 @@
 #include "glframe_glhelper.hpp"
 #include "glframe_logger.hpp"
 #include "glframe_metrics.hpp"
+#include "glframe_perf_enabled.hpp"
 #include "glframe_retrace_render.hpp"
 #include "glframe_stderr.hpp"
 #include "glretrace.hpp"
@@ -105,6 +106,16 @@ FrameRetrace::openFile(const std::string &filename,
                        uint32_t framenumber,
                        OnFrameRetrace *callback) {
   check_gpu_speed(callback);
+
+  if (perf_enabled() == false) {
+    std::stringstream msg;
+    msg << "Performance counters not enabled.\n"
+        "To enable counters, execute as root: "
+        "`/sbin/sysctl dev.i915.perf_stream_paranoid=0`";
+    callback->onError(RETRACE_FATAL, msg.str());
+    return;
+  }
+
   assemblyOutput.init();
   retrace::debug = 0;
   retracer.addCallbacks(glretrace::gl_callbacks);
@@ -136,7 +147,7 @@ FrameRetrace::openFile(const std::string &filename,
     delete call;
     if (frame_boundary) {
       ++current_frame;
-      callback->onFileOpening(false, false, current_frame * 100 / framenumber);
+      callback->onFileOpening(false, false, current_frame);
       if (current_frame == framenumber)
         break;
     }
@@ -174,7 +185,7 @@ FrameRetrace::openFile(const std::string &filename,
 
   // record the final render as ending a render target region
   render_target_regions.push_back(RenderId(m_renders.size() - 1));
-  callback->onFileOpening(false, true, 100);
+  callback->onFileOpening(false, true, current_frame);
 }
 
 int
@@ -312,7 +323,7 @@ FrameState::FrameState(const std::string &filename,
   }
 
   while ((call = parser.scan_call())) {
-    if (call->flags & trace::CALL_FLAG_RENDER) {
+    if (RetraceRender::isRender(*call)) {
       ++render_count;
     }
 

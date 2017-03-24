@@ -19,9 +19,9 @@ ApplicationWindow {
         id : frameRetrace
         selection: selection
         argvZero: Qt.application.arguments[0]
-        onOpenPercentChanged: {
-            if (openPercent < 100) {
-                progressBar.percentComplete = openPercent;
+        onFrameCountChanged: {
+            if (frameCount < progressBar.targetFrame) {
+                progressBar.frameCount = frameCount;
                 return;
             }
             progressBar.visible = false;
@@ -94,6 +94,8 @@ ApplicationWindow {
                 flickableDirection: Flickable.HorizontalFlick
                 clip: true
                 TextInput {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 4
                     anchors.verticalCenter: parent.verticalCenter
                     verticalAlignment: Text.AlignVCenter
                     height: textBox.height
@@ -109,6 +111,9 @@ ApplicationWindow {
                     }
                     KeyNavigation.tab: file_rect
                     KeyNavigation.backtab: cancelButton
+                    Keys.onReturnPressed: {
+                        okButton.clicked()
+                    }
                 }
             }
         }
@@ -166,6 +171,8 @@ ApplicationWindow {
             TextInput {
                 height: textHeight.height
                 anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                anchors.leftMargin: 4
                 verticalAlignment: Text.AlignVCenter
                 activeFocusOnPress : true
                 width: parent.width
@@ -178,6 +185,9 @@ ApplicationWindow {
                 }
                 KeyNavigation.tab: hostInput
                 KeyNavigation.backtab: file_rect
+                Keys.onReturnPressed: {
+                    okButton.clicked()
+                }
             }
         }
         Text {
@@ -197,6 +207,8 @@ ApplicationWindow {
             TextInput {
                 height: textHeight.height
                 anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                anchors.leftMargin: 4
                 verticalAlignment: Text.AlignVCenter
                 activeFocusOnPress : true
                 width: parent.width
@@ -209,6 +221,9 @@ ApplicationWindow {
                 }
                 KeyNavigation.tab: okButton
                 KeyNavigation.backtab: frameInput
+                Keys.onReturnPressed: {
+                    okButton.clicked()
+                }
             }
         }
         Button {
@@ -219,8 +234,9 @@ ApplicationWindow {
             text: "OK"
             onClicked: {
                 if (frameRetrace.setFrame(textInput.text, frameInput.text, hostInput.text)) {
-                    openfile.visible = false
-                    progressBar.visible = true
+                    openfile.visible = false;
+                    progressBar.visible = true;
+                    progressBar.targetFrame = parseInt(frameInput.text, 10);
                 } else {
                     fileError.text = "File not found:\n\t" + textInput.text;
                     fileError.visible = true;
@@ -253,9 +269,10 @@ ApplicationWindow {
         id: progressBar
         visible: false
         anchors.fill: parent
-        property int percentComplete
-        onPercentCompleteChanged: {
-            blueBar.width = percentComplete / 100 * progressBackground.width
+        property int frameCount
+        property int targetFrame
+        onFrameCountChanged: {
+            blueBar.width = frameCount / targetFrame * progressBackground.width
         }
         Rectangle {
             id: progressBackground
@@ -272,6 +289,11 @@ ApplicationWindow {
             width: 0
             height: 20
             z:1
+        }
+        Text {
+            anchors.left: progressBackground.left
+            anchors.top: progressBackground.bottom
+            text: "Playing frame: " + progressBar.frameCount.toString()
         }
     }
     ColumnLayout {

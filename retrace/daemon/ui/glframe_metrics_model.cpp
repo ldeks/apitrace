@@ -162,6 +162,7 @@ QMetricsModel::refresh() {
     // no metrics available
     return;
 
+  // retrace the metrics for the frame
   RenderSelection s;
   s.id = SelectionId(0);
   s.series.push_back(RenderSequence(RenderId(0), RenderId(m_render_count)));
@@ -231,7 +232,7 @@ QMetricValue::value() const {
   int precision = 4;
   if (fabs(m_value - round(m_value)) < 0.00001)
     precision = 0;
-  return QLocale(QLocale::English).toString(m_value, 'f', precision);
+  return QLocale().toString(m_value, 'f', precision);
 }
 
 QString

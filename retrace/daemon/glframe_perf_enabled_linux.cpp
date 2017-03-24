@@ -1,6 +1,6 @@
 /**************************************************************************
  *
- * Copyright 2015 Intel Corporation
+ * Copyright 2017 Intel Corporation
  * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,41 +25,27 @@
  *   Mark Janes <mark.a.janes@intel.com>
  **************************************************************************/
 
-#include <string>
-#include <vector>
-#include "glframe_state.hpp"
+#include "glframe_perf_enabled.hpp"
 
-namespace glretrace {
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
-class StdErrRedirect : public OutputPoller {
- public:
-  StdErrRedirect();
-  void poll(int current_program, StateTrack *cb);
-  ~StdErrRedirect();
-  void init();
+const char *perf_fn = "/proc/sys/dev/i915/perf_stream_paranoid";
 
- private:
-  int out_pipe[2];
-  std::vector<char> buf;
-};
+bool glretrace::perf_enabled() {
+  int fh = open(perf_fn, O_RDONLY);
+  if (fh == -1)
+    return true;
+  char buf[256];
+  ssize_t bytes = read(fh, buf, 255);
+  if (bytes < 1)
+    return true;
+  buf[255] = '\0';
+  if (buf[0] != '0')
+    return false;
+  return true;
+}
 
-class NoRedirect : public OutputPoller {
- public:
-  NoRedirect() {}
-  void poll(int, StateTrack *) {}
-  ~NoRedirect() {}
-  void init() {}
-};
 
-class WinShaders : public OutputPoller {
- public:
-  WinShaders() {}
-  void poll(int current_program, StateTrack *cb);
-  ~WinShaders() {}
-  void init();
- private:
-  std::string m_dump_dir;
-  std::string m_dump_pattern;
-};
-
-}  // namespace glretrace
