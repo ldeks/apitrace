@@ -31,23 +31,24 @@ using glretrace::QQuickViewWidget;
 
 QQuickViewWidget::QQuickViewWidget(const QUrl &url,
                                    QWidget *parent) : QWidget(parent) {
-  view = new QQuickView();
-  view->setResizeMode(QQuickView::SizeRootObjectToView);
+  view = new QQuickWidget();
+  view->setResizeMode(QQuickWidget::SizeRootObjectToView);
   view->setSource(url);
-  connect(view, SIGNAL(statusChanged(QQuickView::Status)),
-          this, SIGNAL(statusChanged(QQuickView::Status)));
+  connect(view, SIGNAL(statusChanged(QQuickWidget::Status)),
+          this, SIGNAL(statusChanged(QQuickWidget::Status)));
   connect(view, SIGNAL(sceneGraphError(
             QQuickWindow::SceneGraphError, const QString &)),
           this, SIGNAL(sceneGraphError(
             QQuickWindow::SceneGraphError, const QString &)));
 
-  container = QWidget::createWindowContainer(view, this);
-  container->setMinimumSize(view->size());
-  container->setFocusPolicy(Qt::TabFocus);
+  // container = QWidget::createWindowContainer(view, this);
+  // container->setMinimumSize(view->size());
+  // container->setFocusPolicy(Qt::TabFocus);
 
   layout = new QVBoxLayout(this);
   this->setLayout(layout);
-  layout->addWidget(container);
+  // layout->addWidget(container);
+  layout->addWidget(view);
 }
 
 QQuickViewWidget::~QQuickViewWidget() {

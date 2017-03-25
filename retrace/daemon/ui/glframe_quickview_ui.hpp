@@ -29,7 +29,8 @@
 #define _GLFRAME_QUICKVIEW_UI_HPP_
 
 #include <QQmlEngine>
-#include <QQuickView>
+#include <QQuickItem>
+#include <QQuickWidget>
 #include <QUrl>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -45,13 +46,14 @@ class QQuickViewWidget : public QWidget {
   explicit QQuickViewWidget(const QUrl &url, QWidget *parent = 0);
   virtual ~QQuickViewWidget();
   inline QQmlEngine *engine() { return view->engine(); }
+  inline QQuickItem *rootObject() { return view->rootObject(); }
 
  signals:
-  void statusChanged(QQuickView::Status);
+  void statusChanged(QQuickWidget::Status);
   void sceneGraphError(QQuickWindow::SceneGraphError, const QString &);
 
  protected:
-  QQuickView *view;
+  QQuickWidget *view;
   QVBoxLayout *layout;
   QWidget *container;
 };

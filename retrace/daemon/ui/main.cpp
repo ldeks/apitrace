@@ -131,7 +131,6 @@ int main(int argc, char *argv[]) {
     QRect screenGeometry = (QGuiApplication::primaryScreen())->geometry();
     screenGeometry.moveTo(0, 0);
     mainWindow.setGeometry(screenGeometry);
-    mainWindow.setGeometry(0, 0, 1000, 700);
     mainWindow.setWindowTitle("Frame Retrace");
     mainWindow.statusBar()->showMessage("Ready");
 
@@ -145,7 +144,7 @@ int main(int argc, char *argv[]) {
     openDialogView->engine()->addImageProvider("myimageprovider",
                                 glretrace::FrameImages::instance());
     openDialog->setModal(true);
-    openDialog->setGeometry(300, 300, 600, 500);
+    openDialog->setGeometry(300, 300, 1000, 600);
     openDialog->setWindowTitle("Frame Retrace Open Dialog");
 
     mainWindow.show();

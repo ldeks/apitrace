@@ -22,7 +22,6 @@ Rectangle {
               return;
           }
           progressBar.visible = false;
-          mainUI.visible = true;
       }
       onGeneralErrorChanged: {
           fileError.text = frameRetrace.generalError;
