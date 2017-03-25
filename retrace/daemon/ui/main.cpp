@@ -25,10 +25,16 @@
 //  *   Mark Janes <mark.a.janes@intel.com>
 //  **********************************************************************/
 
+#include <QApplication>
+#include <QDialog>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtQml>
 #include <QList>
+#include <QMainWindow>
+#include <QRect>
+#include <QScreen>
+#include <QStatusBar>
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>
 #include <google/protobuf/io/coded_stream.h>
 
@@ -44,6 +50,7 @@
 #include "glframe_logger.hpp"
 #include "glframe_os.hpp"
 #include "glframe_api_model.hpp"
+#include "glframe_quickview_ui.hpp"
 #include "glframe_qbargraph.hpp"
 #include "glframe_retrace_images.hpp"
 #include "glframe_retrace_model.hpp"
@@ -62,6 +69,7 @@ using glretrace::QApiModel;
 using glretrace::QMetric;
 using glretrace::QRenderBookmark;
 using glretrace::QRenderShaders;
+using glretrace::QQuickViewWidget;
 using glretrace::ServerSocket;
 using glretrace::Socket;
 
@@ -81,7 +89,7 @@ int main(int argc, char *argv[]) {
   Socket::Init();
   Logger::Begin();
 
-  QGuiApplication app(argc, argv);
+  QApplication app(argc, argv);
   app.setOrganizationName("Open Source Technology Center");
   app.setOrganizationDomain("intel.com");
   app.setApplicationName("frame_retrace");
@@ -113,9 +121,35 @@ int main(int argc, char *argv[]) {
 
   int ret = -1;
   {
-    QQmlApplicationEngine engine(QUrl("qrc:///qml/mainwin.qml"));
-    engine.addImageProvider("myimageprovider",
-                            glretrace::FrameImages::instance());
+    // Main Window
+    QMainWindow mainWindow;
+    QQuickViewWidget* mainWindowView =
+      new QQuickViewWidget(QUrl("qrc:///qml/mainwin.qml"), &mainWindow);
+    mainWindow.setCentralWidget(mainWindowView);
+    mainWindowView->engine()->addImageProvider("myimageprovider",
+                                glretrace::FrameImages::instance());
+    QRect screenGeometry = (QGuiApplication::primaryScreen())->geometry();
+    screenGeometry.moveTo(0, 0);
+    mainWindow.setGeometry(screenGeometry);
+    mainWindow.setGeometry(0, 0, 1000, 700);
+    mainWindow.setWindowTitle("Frame Retrace");
+    mainWindow.statusBar()->showMessage("Ready");
+
+    // Open file dialog
+    QDialog* openDialog = new QDialog(&mainWindow);
+    QVBoxLayout openDialogLayout;
+    QQuickViewWidget* openDialogView =
+      new QQuickViewWidget(QUrl("qrc:///qml/opendialog.qml"), openDialog);
+    openDialog->setLayout(&openDialogLayout);
+    openDialogLayout.addWidget(openDialogView);
+    openDialogView->engine()->addImageProvider("myimageprovider",
+                                glretrace::FrameImages::instance());
+    openDialog->setModal(true);
+    openDialog->setGeometry(300, 300, 600, 500);
+    openDialog->setWindowTitle("Frame Retrace Open Dialog");
+
+    mainWindow.show();
+    openDialog->show();
     ret = app.exec();
   }
   ::google::protobuf::ShutdownProtobufLibrary();

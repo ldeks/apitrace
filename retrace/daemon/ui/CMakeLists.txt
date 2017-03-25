@@ -25,6 +25,8 @@ set (UI_SRC
   glframe_api_model.cpp
   glframe_metrics_model.hpp
   glframe_metrics_model.cpp
+  glframe_quickview_ui.hpp
+  glframe_quickview_ui.cpp
   glframe_qutil.hpp
   glframe_qutil.cpp
   glframe_retrace_images.hpp
