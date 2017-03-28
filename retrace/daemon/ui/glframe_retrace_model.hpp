@@ -115,12 +115,9 @@ class FrameRetraceModel : public QObject,
   Q_PROPERTY(QString argvZero READ argvZero WRITE setArgvZero
              NOTIFY onArgvZero)
   Q_PROPERTY(glretrace::QMetricsModel* metricTab READ metricTab CONSTANT)
-  Q_PROPERTY(QString generalError READ generalError
-             NOTIFY onGeneralError)
-  Q_PROPERTY(QString generalErrorDetails READ generalErrorDetails
-             NOTIFY onGeneralError)
-  Q_PROPERTY(Severity errorSeverity READ errorSeverity
-             NOTIFY onGeneralError)
+  Q_PROPERTY(QString generalError READ generalError)
+  Q_PROPERTY(QString generalErrorDetails READ generalErrorDetails)
+  Q_PROPERTY(Severity errorSeverity READ errorSeverity)
 
  public:
   FrameRetraceModel();
@@ -206,7 +203,8 @@ class FrameRetraceModel : public QObject,
   void onApiCalls();
   void onShaderCompileError();
   void onArgvZero();
-  void onGeneralError();
+
+  void signalGeneralError(QString error, QString details);
 
   // this signal transfers onMetricList to be handled in the UI
   // thread.  The handler generates QObjects which are passed to qml

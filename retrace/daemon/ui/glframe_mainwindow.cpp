@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
               QQuickWindow::SceneGraphError, const QString&)));
 
   setCentralWidget(quickWidget);
+
   setGeometry(0, 0, 1000, 700);
   setWindowTitle("Frame Retrace");
   statusBar()->showMessage("");

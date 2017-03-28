@@ -504,7 +504,7 @@ FrameRetraceModel::onError(ErrorSeverity s, const std::string &message) {
       m_severity = Fatal;
       break;
   }
-  emit onGeneralError();
+  emit signalGeneralError(m_general_error, m_general_error_details);
 }
 
 void

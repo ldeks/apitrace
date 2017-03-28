@@ -14,6 +14,12 @@ Rectangle {
         id: selection
     }
 
+    function reportGeneralError(error, details) {
+      fileError.text = error;
+      fileError.detailedText = details;
+      fileError.visible = true;
+    }
+
     FrameRetrace {
         id : frameRetrace
         selection: selection
@@ -26,11 +32,9 @@ Rectangle {
             progressBar.visible = false;
             mainUI.visible = true;
         }
-        onGeneralErrorChanged: {
-            fileError.text = frameRetrace.generalError;
-            fileError.detailedText = frameRetrace.generalErrorDetails;
-            fileError.visible = true;
-        }
+       // For now, this is where we make connections since FrameRetrace
+       // lives in the QML.
+       onSignalGeneralError: reportGeneralError(error, details)
     }
 
     MessageDialog {
