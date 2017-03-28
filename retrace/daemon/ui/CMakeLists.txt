@@ -9,6 +9,7 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Quick REQUIRED)
+find_package(Qt5QuickWidgets REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 
 # Instruct CMake to run moc automatically when needed.
@@ -23,6 +24,8 @@ set (UI_SRC
   main.cpp
   glframe_api_model.hpp
   glframe_api_model.cpp
+  glframe_mainwindow.hpp
+  glframe_mainwindow.cpp
   glframe_metrics_model.hpp
   glframe_metrics_model.cpp
   glframe_qutil.hpp
@@ -55,7 +58,7 @@ target_link_libraries(frame_retrace
   glretrace_common
   glhelpers
   glproc_gl
-  Qt5::Core Qt5::Gui Qt5::Concurrent Qt5::Quick
+  Qt5::Core Qt5::Gui Qt5::Concurrent Qt5::Quick Qt5::QuickWidgets
   libprotobuf
   ${GL_LIB}
   ${X11_X11_LIB}

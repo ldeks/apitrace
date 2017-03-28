@@ -5,11 +5,10 @@ import QtQuick.Dialogs 1.1
 import ApiTrace 1.0
 import Qt.labs.settings 1.0
 
-ApplicationWindow {
+Rectangle {
+    id: mainWindowShell
     width: 1000
-    height: 800
-    visible: true
-    id: mainWindow
+    height: 700
 
     Selection {
         id: selection

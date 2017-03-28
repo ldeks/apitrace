@@ -25,7 +25,7 @@
 //  *   Mark Janes <mark.a.janes@intel.com>
 //  **********************************************************************/
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QtQml>
 #include <QList>
@@ -44,6 +44,7 @@
 #include "glframe_logger.hpp"
 #include "glframe_os.hpp"
 #include "glframe_api_model.hpp"
+#include "glframe_mainwindow.hpp"
 #include "glframe_qbargraph.hpp"
 #include "glframe_retrace_images.hpp"
 #include "glframe_retrace_model.hpp"
@@ -58,6 +59,7 @@ using glretrace::FrameRetraceSkeleton;
 using glretrace::FrameRetraceStub;
 using glretrace::GlFunctions;
 using glretrace::Logger;
+using glretrace::MainWindow;
 using glretrace::QApiModel;
 using glretrace::QMetric;
 using glretrace::QRenderBookmark;
@@ -81,7 +83,7 @@ int main(int argc, char *argv[]) {
   Socket::Init();
   Logger::Begin();
 
-  QGuiApplication app(argc, argv);
+  QApplication app(argc, argv);
   app.setOrganizationName("Open Source Technology Center");
   app.setOrganizationDomain("intel.com");
   app.setApplicationName("frame_retrace");
@@ -113,9 +115,10 @@ int main(int argc, char *argv[]) {
 
   int ret = -1;
   {
-    QQmlApplicationEngine engine(QUrl("qrc:///qml/mainwin.qml"));
-    engine.addImageProvider("myimageprovider",
+    MainWindow mwindow;
+    mwindow.engine()->addImageProvider("myimageprovider",
                             glretrace::FrameImages::instance());
+    mwindow.show();
     ret = app.exec();
   }
   ::google::protobuf::ShutdownProtobufLibrary();
