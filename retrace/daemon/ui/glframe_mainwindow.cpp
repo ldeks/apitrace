@@ -25,8 +25,10 @@
  *   Laura Ekstrand <laura@jlekstrand.net>
  **************************************************************************/
 
+#include <QCoreApplication>
 #include <QList>
 #include <QQmlError>
+#include <QQuickItem>
 #include <QStatusBar>
 #include <QUrl>
 
@@ -46,6 +48,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
               QQuickWindow::SceneGraphError, const QString&)));
 
   setCentralWidget(quickWidget);
+
+  connect(quickWidget->rootObject(), SIGNAL(quit()),
+          QCoreApplication::instance(), SLOT(quit()));
 
   setGeometry(0, 0, 1000, 700);
   setWindowTitle("Frame Retrace");

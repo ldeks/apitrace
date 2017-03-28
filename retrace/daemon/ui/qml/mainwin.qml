@@ -10,6 +10,15 @@ Rectangle {
     width: 1000
     height: 700
 
+    signal checkErrorSeverity()
+    signal quit()
+
+    onCheckErrorSeverity: {
+        if (frameRetrace.errorSeverity == FrameRetrace.Fatal) {
+            quit();
+        }
+    }
+
     Selection {
         id: selection
     }
@@ -44,9 +53,7 @@ Rectangle {
         visible: false
         onAccepted: {
             visible = false;
-            if (frameRetrace.errorSeverity == FrameRetrace.Fatal) {
-                Qt.quit();
-            }
+            checkErrorSeverity();
         }
     }
 
