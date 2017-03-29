@@ -13,7 +13,7 @@ Rectangle {
     signal checkErrorSeverity()
     signal quit()
     signal updateTextInput(url path)
-    signal setTextInput(string path);
+    signal setTextInput(string path)
     signal setFrame(string fileName, string frameNumber, string hostName)
     signal filterMetrics(string text)
     signal refreshMetrics()
