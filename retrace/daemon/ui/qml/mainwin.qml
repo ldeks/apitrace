@@ -67,6 +67,10 @@ Rectangle {
        // For now, this is where we make connections since FrameRetrace
        // lives in the QML.
        onSignalGeneralError: reportGeneralError(error, details)
+       onOnQMetricList: {
+           barGraphControl.vertMetricNames()
+           barGraphControl.horizMetricNames()
+       }
     }
 
     MessageDialog {
@@ -338,6 +342,7 @@ Rectangle {
         }
         
         BarGraphControl {
+            id: barGraphControl
             selection: selection
             metric_model: frameRetrace
             Layout.preferredHeight: 50

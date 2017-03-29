@@ -61,8 +61,6 @@ Item {
         vert_metric = "No metric";
         horiz_metrics = ["No metric"];
         horiz_metric = "No metric";
-        metric_model.onQMetricList.connect(vertMetricNames)
-        metric_model.onQMetricList.connect(horizMetricNames)
     }
     
     ColumnLayout {
