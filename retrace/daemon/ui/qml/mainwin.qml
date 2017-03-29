@@ -14,6 +14,7 @@ Rectangle {
     signal quit()
     signal updateTextInput(url path)
     signal setTextInput(string path);
+    signal setFrame(string fileName, string frameNumber, string hostName)
 
     onCheckErrorSeverity: {
         if (frameRetrace.errorSeverity == FrameRetrace.Fatal) {
@@ -23,6 +24,17 @@ Rectangle {
 
     onSetTextInput: {
       textInput.text = path;
+    }
+
+    onSetFrame: {
+      if (frameRetrace.setFrame(fileName, frameNumber, hostName)) {
+          openfile.visible = false;
+          progressBar.visible = true;
+          progressBar.targetFrame = parseInt(frameInput.text, 10);
+      } else {
+          fileError.text = "File not found:\n\t" + textInput.text;
+          fileError.visible = true;
+      }
     }
 
     Selection {
@@ -249,14 +261,7 @@ Rectangle {
             anchors.topMargin: 10
             text: "OK"
             onClicked: {
-                if (frameRetrace.setFrame(textInput.text, frameInput.text, hostInput.text)) {
-                    openfile.visible = false;
-                    progressBar.visible = true;
-                    progressBar.targetFrame = parseInt(frameInput.text, 10);
-                } else {
-                    fileError.text = "File not found:\n\t" + textInput.text;
-                    fileError.visible = true;
-                }
+                setFrame(textInput.text, frameInput.text, hostInput.text)
             }
             KeyNavigation.tab: cancelButton
             KeyNavigation.backtab: hostInput
