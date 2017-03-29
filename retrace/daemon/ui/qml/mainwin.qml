@@ -15,6 +15,8 @@ Rectangle {
     signal updateTextInput(url path)
     signal setTextInput(string path);
     signal setFrame(string fileName, string frameNumber, string hostName)
+    signal filterMetrics(string text)
+    signal refreshMetrics()
 
     onCheckErrorSeverity: {
         if (frameRetrace.errorSeverity == FrameRetrace.Fatal) {
@@ -36,6 +38,9 @@ Rectangle {
           fileError.visible = true;
       }
     }
+
+    onFilterMetrics: frameRetrace.filterMetrics(text)
+    onRefreshMetrics: frameRetrace.refreshMetrics()
 
     Selection {
         id: selection
@@ -325,10 +330,11 @@ Rectangle {
         RefreshControl {
             Layout.minimumHeight: 20
             Layout.maximumHeight: 20
-            metricsModel: frameRetrace
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
             Layout.fillHeight: true
+            onFilterMetrics: mainWindowShell.filterMetrics(text)
+            onRefreshMetrics: mainWindowShell.refreshMetrics()
         }
         
         BarGraphControl {

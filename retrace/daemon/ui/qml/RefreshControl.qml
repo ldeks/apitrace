@@ -5,7 +5,9 @@ import QtQuick.Dialogs 1.1
 import ApiTrace 1.0
 
 Item {
-    property FrameRetrace metricsModel
+    signal filterMetrics(string text)
+    signal refreshMetrics()
+
     Item {
         id: metricsItem
         anchors.left: parent.left
@@ -37,9 +39,7 @@ Item {
                 anchors.leftMargin: 4
                 id: metricFilter
                 text: ""
-                onDisplayTextChanged: {
-                    metricsModel.filterMetrics(displayText)
-                }
+                onDisplayTextChanged: filterMetrics(displayText)
             }
         }
         Button {
@@ -47,9 +47,7 @@ Item {
             anchors.left: textRect.right
             anchors.leftMargin: 25
             text: "Refresh"
-            onClicked: {
-                metricsModel.refreshMetrics();
-            }
+            onClicked: refreshMetrics()
         }
     }
 }
