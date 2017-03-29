@@ -51,6 +51,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
   connect(quickWidget->rootObject(), SIGNAL(quit()),
           QCoreApplication::instance(), SLOT(quit()));
+  connect(quickWidget->rootObject(),
+          SIGNAL(updateTextInput(const QUrl&)),
+          this, SLOT(updateTextInput(const QUrl&)));
+  connect(this, SIGNAL(setTextInput(const QString&)),
+          quickWidget->rootObject(),
+          SIGNAL(setTextInput(const QString&)));
 
   setGeometry(0, 0, 1000, 700);
   setWindowTitle("Frame Retrace");
@@ -82,4 +88,11 @@ void
 MainWindow::quickSceneGraphError(QQuickWindow::SceneGraphError error,
                               const QString &message) {
   statusBar()->showMessage(message);
+}
+
+void
+MainWindow::updateTextInput(const QUrl &url) {
+  QString urlString = url.toLocalFile();
+
+  emit setTextInput(urlString);
 }

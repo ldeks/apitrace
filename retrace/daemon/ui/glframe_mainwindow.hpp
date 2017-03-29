@@ -32,6 +32,7 @@
 #include <QMainWindow>
 #include <QQmlEngine>
 #include <QQuickWidget>
+#include <QUrl>
 #include <QWidget>
 
 namespace glretrace {
@@ -44,10 +45,14 @@ class MainWindow : public QMainWindow {
   virtual ~MainWindow();
   inline QQmlEngine *engine() { return quickWidget->engine(); }
 
+ signals:
+  void setTextInput(const QString &path);
+
  protected slots:
   void quickStatusChanged(QQuickWidget::Status status);
   void quickSceneGraphError(QQuickWindow::SceneGraphError error,
                              const QString &message);
+  void updateTextInput(const QUrl &url);
 
  protected:
   QQuickWidget *quickWidget;

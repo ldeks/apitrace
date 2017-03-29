@@ -12,11 +12,17 @@ Rectangle {
 
     signal checkErrorSeverity()
     signal quit()
+    signal updateTextInput(url path)
+    signal setTextInput(string path);
 
     onCheckErrorSeverity: {
         if (frameRetrace.errorSeverity == FrameRetrace.Fatal) {
             quit();
         }
+    }
+
+    onSetTextInput: {
+      textInput.text = path;
     }
 
     Selection {
@@ -160,7 +166,7 @@ Rectangle {
             nameFilters: [ "trace files (*.trace)", "All files (*)" ]
             onAccepted: {
                 var path = fileDialog.fileUrl
-                textInput.text = frameRetrace.urlToFilePath(path)
+                updateTextInput(path)
                 fileDialog.visible = false
             }
         }
