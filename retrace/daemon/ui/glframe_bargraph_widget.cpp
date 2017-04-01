@@ -25,45 +25,42 @@
  *   Laura Ekstrand <laura@jlekstrand.net>
  **************************************************************************/
 
-
-#ifndef _GLFRAME_MAINWINDOW_HPP_
-#define _GLFRAME_MAINWINDOW_HPP_
-
-#include <QMainWindow>
-#include <QQmlEngine>
-#include <QQuickWidget>
-#include <QUrl>
-#include <QVBoxLayout>
-#include <QWidget>
-
 #include "glframe_bargraph_widget.hpp"
 
-namespace glretrace {
+using glretrace::BarGraphWidget;
 
-class MainWindow : public QMainWindow {
-  Q_OBJECT
+BarGraphWidget::BarGraphWidget(QWidget *parent) : QWidget(parent) {
+  layout = new QVBoxLayout(this);
+  setLayout(layout);
+  // graph = new BarGraphView(this);
+  metricsBoxes = new QWidget(this);
 
- public:
-  explicit MainWindow(QWidget *parent = 0);
-  virtual ~MainWindow();
-  inline QQmlEngine *engine() { return quickWidget->engine(); }
+  metricsBoxesLayout = new QHBoxLayout(metricsBoxes);
+  metricsBoxes->setLayout(metricsBoxesLayout);
+  vertLabel = new QLabel("Vertical metric: ", metricsBoxes);
+  vertLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  horizLabel = new QLabel("Horizontal metric: ", metricsBoxes);
+  horizLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  vertBox = new QComboBox(metricsBoxes);
+  horizBox = new QComboBox(metricsBoxes);
+  metricsBoxesLayout->addWidget(vertLabel);
+  metricsBoxesLayout->addWidget(vertBox);
+  metricsBoxesLayout->addWidget(horizLabel);
+  metricsBoxesLayout->addWidget(horizBox);
 
- signals:
-  void setTextInput(const QString &path);
+  // layout->addWidget(graph);
+  layout->addWidget(metricsBoxes);
+}
 
- protected slots:
-  void quickStatusChanged(QQuickWidget::Status status);
-  void quickSceneGraphError(QQuickWindow::SceneGraphError error,
-                             const QString &message);
-  void updateTextInput(const QUrl &url);
+BarGraphWidget::~BarGraphWidget() {
+}
 
- protected:
-  QQuickWidget *quickWidget;
-  QWidget *centralWidget;
-  QVBoxLayout *layout;
-  BarGraphWidget *graph;
-};
+void
+BarGraphWidget::setModel(FrameRetraceModel *m) {
+  graph->setModel(m);
+}
 
-}  // namespace glretrace
-
-#endif  // _GLFRAME_MAINWINDOW_HPP_
+void
+BarGraphWidget::setSelection(QSelection *s) {
+  graph->setSelection(s);
+}

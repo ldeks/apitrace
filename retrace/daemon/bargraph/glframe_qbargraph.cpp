@@ -46,6 +46,13 @@ using glretrace::QSelection;
 QBarGraphRenderer::QBarGraphRenderer() : m_graph(true),
                                          selection(NULL),
                                          subscribed(false) {
+  // setSurfaceType(QSurface::OpenGLSurface);
+  // ctx = new QOpenGLContext(this);
+  // if (!ctx->create()) {
+  //   delete ctx;
+  //   ctx = 0;
+  // }
+
   m_graph.subscribe(this);
 }
 
@@ -55,8 +62,7 @@ QBarGraphRenderer::render() {
 }
 
 void
-QBarGraphRenderer::synchronize(QQuickFramebufferObject * item) {
-  BarGraphView *v = reinterpret_cast<BarGraphView*>(item);
+QBarGraphRenderer::synchronize(BarGraphView *v) {
   if (!selection) {
     QSelection *s = v->getSelection();
     if (s) {
@@ -130,20 +136,25 @@ QBarGraphRenderer::onMetrics(QList<BarMetrics> metrics) {
     m.push_back(metric);
   }
   m_graph.setBars(m);
-  update();
+  // update();
 }
 
-QQuickFramebufferObject::Renderer *
-BarGraphView::createRenderer() const {
-  return new QBarGraphRenderer();
+BarGraphView::BarGraphView(QWidget *parent) :
+                           QWidget(parent), mouse_area(4),
+                           clicked(false), shift(false),
+                           selection(NULL), model(NULL),
+                           m_randomBars(0),
+                           m_zoom(1.0),
+                           m_translate(0.0) {
+  renderer = new QBarGraphRenderer();
+  container = QWidget::createWindowContainer(renderer, this);
+  layout = new QVBoxLayout(this);
+  setLayout(layout);
+  layout->addWidget(container);
 }
 
-BarGraphView::BarGraphView() : mouse_area(4),
-                               clicked(false), shift(false),
-                               selection(NULL), model(NULL),
-                               m_randomBars(0),
-                               m_zoom(1.0),
-                               m_translate(0.0) {
+BarGraphView::~BarGraphView() {
+  delete renderer;
 }
 
 void

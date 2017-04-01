@@ -37,8 +37,16 @@
 using glretrace::MainWindow;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+  centralWidget = new QWidget(this);
+  setCentralWidget(centralWidget);
+  layout = new QVBoxLayout(centralWidget);
+  centralWidget->setLayout(layout);
+  graph = new BarGraphWidget(this);
   quickWidget = new QQuickWidget(this);
   quickWidget->setSource(QUrl("qrc:///qml/mainwin.qml"));
+
+  layout->addWidget(graph);
+  layout->addWidget(quickWidget);
 
   connect(quickWidget, SIGNAL(statusChanged(QQuickWidget::Status)),
           this, SLOT(quickStatusChanged(QQuickWidget::Status)));
@@ -46,8 +54,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
               QQuickWindow::SceneGraphError, const QString&)),
           this, SLOT(quickSceneGraphError(
               QQuickWindow::SceneGraphError, const QString&)));
-
-  setCentralWidget(quickWidget);
 
   connect(quickWidget->rootObject(), SIGNAL(quit()),
           QCoreApplication::instance(), SLOT(quit()));

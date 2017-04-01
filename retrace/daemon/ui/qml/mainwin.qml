@@ -7,8 +7,8 @@ import Qt.labs.settings 1.0
 
 Rectangle {
     id: mainWindowShell
-    width: 1000
-    height: 700
+    width: 950
+    height: 500
 
     signal checkErrorSeverity()
     signal quit()
@@ -341,15 +341,15 @@ Rectangle {
             onRefreshMetrics: mainWindowShell.refreshMetrics()
         }
         
-        BarGraphControl {
-            id: barGraphControl
-            selection: selection
-            metric_model: frameRetrace
-            Layout.preferredHeight: 50
-            Layout.alignment: Qt.AlignTop
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
+         BarGraphControl {
+             id: barGraphControl
+             selection: selection
+             metric_model: frameRetrace
+             Layout.preferredHeight: 50
+             Layout.alignment: Qt.AlignTop
+             Layout.fillWidth: true
+             Layout.fillHeight: true
+         }
 
         TabView {
             Layout.preferredWidth: 400

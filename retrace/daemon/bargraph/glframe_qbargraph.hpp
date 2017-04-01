@@ -28,7 +28,11 @@
 #ifndef RETRACE_DAEMON_BARGRAPH_GLFRAME_QBARGRAPH_H_
 #define RETRACE_DAEMON_BARGRAPH_GLFRAME_QBARGRAPH_H_
 
-#include <QtQuick/QQuickFramebufferObject>
+#include <QOpenGLContext>
+#include <QOpenGLFramebufferObject>
+#include <QVBoxLayout>
+#include <QWidget>
+#include <QWindow>
 
 #include <mutex>
 #include <vector>
@@ -40,19 +44,19 @@
 namespace glretrace {
 
 class FrameRetraceModel;
-class QBarGraphRenderer : public QObject,
-                          public QQuickFramebufferObject::Renderer,
+class BarGraphView;
+class QBarGraphRenderer : public QWindow,
                           public glretrace::BarGraphSubscriber,
                           NoCopy, NoAssign, NoMove {
   Q_OBJECT
  public:
   QBarGraphRenderer();
-  void render();
-  void synchronize(QQuickFramebufferObject * item);
+  void synchronize(BarGraphView *v);
   void onBarSelect(const std::vector<int> selection);
   // to ensure that we get a multisample fbo
   QOpenGLFramebufferObject * createFramebufferObject(const QSize & size);
  public slots:
+  void render();
   void onSelect(QList<int> selection);
   void onMetrics(QList<BarMetrics> metrics);
  signals:
@@ -62,11 +66,12 @@ class QBarGraphRenderer : public QObject,
   std::vector<int> current_selection;
   QSelection *selection;
   bool subscribed;
+  QOpenGLContext *ctx;
 };
 
 // exposes qml properties and signals to integrate the bar graph into
 // the application.
-class BarGraphView : public QQuickFramebufferObject,
+class BarGraphView : public QWidget,
                      NoCopy, NoAssign, NoMove {
   Q_OBJECT
   Q_PROPERTY(glretrace::QSelection* selection
@@ -87,8 +92,8 @@ class BarGraphView : public QQuickFramebufferObject,
              NOTIFY translateChanged)
 
  public:
-  BarGraphView();
-  QQuickFramebufferObject::Renderer *createRenderer() const;
+  explicit BarGraphView(QWidget *parent = 0);
+  virtual ~BarGraphView();
   Q_INVOKABLE void mouseRelease(bool shift);
   Q_INVOKABLE void mouseDrag(float x1, float y1, float x2, float y2);
   Q_INVOKABLE void mouseWheel(int degrees, float zoom_point_x);
@@ -129,6 +134,9 @@ class BarGraphView : public QQuickFramebufferObject,
   float m_zoom;  // range [1.0..]
   float m_translate;  // after zoom, translate to keep zoom point in
                       // place [0..1.0] coordinate system
+  QWidget *container;
+  QVBoxLayout *layout;
+  QBarGraphRenderer *renderer;
 };
 
 }  // namespace glretrace

@@ -24,6 +24,8 @@ set (UI_SRC
   main.cpp
   glframe_api_model.hpp
   glframe_api_model.cpp
+  glframe_bargraph_widget.hpp
+  glframe_bargraph_widget.cpp
   glframe_mainwindow.hpp
   glframe_mainwindow.cpp
   glframe_metrics_model.hpp

@@ -26,44 +26,42 @@
  **************************************************************************/
 
 
-#ifndef _GLFRAME_MAINWINDOW_HPP_
-#define _GLFRAME_MAINWINDOW_HPP_
+#ifndef _GLFRAME_BARGRAPH_WIDGET_HPP_
+#define _GLFRAME_BARGRAPH_WIDGET_HPP_
 
-#include <QMainWindow>
-#include <QQmlEngine>
-#include <QQuickWidget>
-#include <QUrl>
+#include <QComboBox>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "glframe_bargraph_widget.hpp"
+#include "glframe_qbargraph.hpp"
+#include "glframe_retrace_model.hpp"
+#include "glframe_metrics_model.hpp"
 
 namespace glretrace {
 
-class MainWindow : public QMainWindow {
+class BarGraphWidget : public QWidget {
   Q_OBJECT
 
  public:
-  explicit MainWindow(QWidget *parent = 0);
-  virtual ~MainWindow();
-  inline QQmlEngine *engine() { return quickWidget->engine(); }
+  explicit BarGraphWidget(QWidget *parent = 0);
+  virtual ~BarGraphWidget();
 
- signals:
-  void setTextInput(const QString &path);
-
- protected slots:
-  void quickStatusChanged(QQuickWidget::Status status);
-  void quickSceneGraphError(QQuickWindow::SceneGraphError error,
-                             const QString &message);
-  void updateTextInput(const QUrl &url);
+  void setModel(FrameRetraceModel *m);
+  void setSelection(QSelection *s);
 
  protected:
-  QQuickWidget *quickWidget;
-  QWidget *centralWidget;
   QVBoxLayout *layout;
-  BarGraphWidget *graph;
+  BarGraphView *graph;
+  QWidget *metricsBoxes;
+  QHBoxLayout *metricsBoxesLayout;
+  QLabel *vertLabel;
+  QLabel *horizLabel;
+  QComboBox *vertBox;
+  QComboBox *horizBox;
 };
 
 }  // namespace glretrace
 
-#endif  // _GLFRAME_MAINWINDOW_HPP_
+#endif  // _GLFRAME_BARGRAPH_WIDGET_HPP_
