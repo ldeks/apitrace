@@ -28,7 +28,9 @@
 #ifndef _GLFRAME_BARGRAPH_HPP_
 #define _GLFRAME_BARGRAPH_HPP_
 
-#include <QOpenGLFunctions>
+#include <QObject>
+#include <QOpenGLContext>
+#include <QSurface>
 
 #include <set>
 #include <string>
@@ -58,9 +60,14 @@ class BarGraphSubscriber {
 //     - mouse area
 //     - bars
 //   - Independent of Qt
-class BarGraphRenderer : protected QOpenGLFunctions {
+class BarGraphRenderer : public QObject {
+  Q_OBJECT
+
  public:
-  explicit BarGraphRenderer(bool invert = false);  // Qt draws top-to-bottom
+  explicit BarGraphRenderer(bool invert = false,  // Qt draws top-to-bottom
+                            QSurface *surf = 0,
+                            QObject *parent = 0);
+  void setSurface(QSurface *surf);
   void setBars(const std::vector<BarMetrics> &bars);
   void setSelection(const std::set<int> &selection);
   void setMouseArea(float x1, float y1, float x2, float y2);
@@ -90,6 +97,7 @@ class BarGraphRenderer : protected QOpenGLFunctions {
   void GetCompileError(GLint shader, std::string *message);
   void PrintCompileError(GLint shader);
   float unzoomX(float x);
+  void initialize();
 
   std::vector<bool> selected;
   std::vector<Vertex> vertices;
@@ -102,7 +110,10 @@ class BarGraphRenderer : protected QOpenGLFunctions {
     // zoom_translate is between -zoom * 1.0 and 0.0
     zoom_translate;
 
+  bool initialized;
   BarGraphSubscriber *subscriber;
+  QOpenGLContext *ctx;
+  QSurface *surface;
 };
 
 }  // namespace glretrace

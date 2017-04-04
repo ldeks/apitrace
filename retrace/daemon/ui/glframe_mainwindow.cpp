@@ -37,6 +37,17 @@
 using glretrace::MainWindow;
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+  setGeometry(0, 0, 1000, 700);
+  setWindowTitle("Frame Retrace");
+  statusBar()->showMessage("");
+}
+
+MainWindow::~MainWindow() {
+    // Nothing to delete because quickWidget is parented.
+}
+
+void
+MainWindow::create() {
   centralWidget = new QWidget(this);
   setCentralWidget(centralWidget);
   layout = new QVBoxLayout(centralWidget);
@@ -63,14 +74,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   connect(this, SIGNAL(setTextInput(const QString&)),
           quickWidget->rootObject(),
           SIGNAL(setTextInput(const QString&)));
-
-  setGeometry(0, 0, 1000, 700);
-  setWindowTitle("Frame Retrace");
-  statusBar()->showMessage("");
-}
-
-MainWindow::~MainWindow() {
-    // Nothing to delete because quickWidget is parented.
 }
 
 void

@@ -32,7 +32,7 @@ using glretrace::BarGraphWidget;
 BarGraphWidget::BarGraphWidget(QWidget *parent) : QWidget(parent) {
   layout = new QVBoxLayout(this);
   setLayout(layout);
-  // graph = new BarGraphView(this);
+  graph = new BarGraphView(this);
   metricsBoxes = new QWidget(this);
 
   metricsBoxesLayout = new QHBoxLayout(metricsBoxes);
@@ -48,7 +48,7 @@ BarGraphWidget::BarGraphWidget(QWidget *parent) : QWidget(parent) {
   metricsBoxesLayout->addWidget(horizLabel);
   metricsBoxesLayout->addWidget(horizBox);
 
-  // layout->addWidget(graph);
+  layout->addWidget(graph);
   layout->addWidget(metricsBoxes);
 }
 

@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
   qmlRegisterType<glretrace::QMetricsModel>("ApiTrace", 1, 0,
                                             "QMetricsModel");
 
-  qmlRegisterType<glretrace::BarGraphView>("ApiTrace", 1, 0, "BarGraph");
+  // qmlRegisterType<glretrace::BarGraphView>("ApiTrace", 1, 0, "BarGraph");
   qmlRegisterType<glretrace::QSelection>("ApiTrace", 1, 0, "Selection");
   qmlRegisterType<glretrace::QShader>("ApiTrace", 1, 0, "Shader");
   qmlRegisterType<glretrace::QRenderShaders>("ApiTrace", 1, 0,
@@ -116,9 +116,10 @@ int main(int argc, char *argv[]) {
   int ret = -1;
   {
     MainWindow mwindow;
+    mwindow.show();
+    mwindow.create();  // So there's an OpenGL Context.
     mwindow.engine()->addImageProvider("myimageprovider",
                             glretrace::FrameImages::instance());
-    mwindow.show();
     ret = app.exec();
   }
   ::google::protobuf::ShutdownProtobufLibrary();

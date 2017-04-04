@@ -47,6 +47,7 @@ class MainWindow : public QMainWindow {
   explicit MainWindow(QWidget *parent = 0);
   virtual ~MainWindow();
   inline QQmlEngine *engine() { return quickWidget->engine(); }
+  void create();  // Call this to make widgets with an OpenGL context.
 
  signals:
   void setTextInput(const QString &path);

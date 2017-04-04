@@ -62,11 +62,10 @@ class QBarGraphRenderer : public QWindow,
  signals:
   void barSelect(QList<int> selection);
  private:
-  BarGraphRenderer m_graph;
+  BarGraphRenderer *m_graph;
   std::vector<int> current_selection;
   QSelection *selection;
   bool subscribed;
-  QOpenGLContext *ctx;
 };
 
 // exposes qml properties and signals to integrate the bar graph into

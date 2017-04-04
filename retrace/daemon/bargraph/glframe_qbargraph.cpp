@@ -43,22 +43,16 @@ using glretrace::FrameRetraceModel;
 using glretrace::QBarGraphRenderer;
 using glretrace::QSelection;
 
-QBarGraphRenderer::QBarGraphRenderer() : m_graph(true),
-                                         selection(NULL),
+QBarGraphRenderer::QBarGraphRenderer() : selection(NULL),
                                          subscribed(false) {
-  // setSurfaceType(QSurface::OpenGLSurface);
-  // ctx = new QOpenGLContext(this);
-  // if (!ctx->create()) {
-  //   delete ctx;
-  //   ctx = 0;
-  // }
-
-  m_graph.subscribe(this);
+  setSurfaceType(QWindow::OpenGLSurface);
+  m_graph = new BarGraphRenderer(true, this, this);
+  m_graph->subscribe(this);
 }
 
 void
 QBarGraphRenderer::render() {
-  m_graph.render();
+  m_graph->render();
 }
 
 void
@@ -85,17 +79,17 @@ QBarGraphRenderer::synchronize(BarGraphView *v) {
     }
   }
 
-  m_graph.setMouseArea(v->mouse_area[0],
-                       v->mouse_area[1],
-                       v->mouse_area[2],
-                       v->mouse_area[3]);
+  m_graph->setMouseArea(v->mouse_area[0],
+                        v->mouse_area[1],
+                        v->mouse_area[2],
+                        v->mouse_area[3]);
   float zoom, zoom_translate;
   v->zoom(&zoom, &zoom_translate);
-  m_graph.setZoom(zoom, zoom_translate);
+  m_graph->setZoom(zoom, zoom_translate);
 
   if (v->clicked) {
-    m_graph.selectMouseArea(v->shift);
-    m_graph.setMouseArea(0, 0, 0, 0);
+    m_graph->selectMouseArea(v->shift);
+    m_graph->setMouseArea(0, 0, 0, 0);
     v->mouse_area[0] = -1.0;
     v->mouse_area[1] = -1.0;
     v->mouse_area[2] = -1.0;
@@ -118,7 +112,7 @@ QBarGraphRenderer::onSelect(QList<int> selection) {
   std::set<int> s;
   for (auto i : selection)
     s.insert(i);
-  m_graph.setSelection(s);
+  m_graph->setSelection(s);
 }
 
 
@@ -135,7 +129,7 @@ QBarGraphRenderer::onMetrics(QList<BarMetrics> metrics) {
   for (auto metric : metrics) {
     m.push_back(metric);
   }
-  m_graph.setBars(m);
+  m_graph->setBars(m);
   // update();
 }
 

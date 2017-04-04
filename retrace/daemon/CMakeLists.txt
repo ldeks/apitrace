@@ -94,7 +94,7 @@ if (NOT WIN32)
 endif()
 
 add_subdirectory (framestat)
-add_subdirectory (test)
+# add_subdirectory (test)
 add_subdirectory (ui)
 add_subdirectory (server)
 add_subdirectory (bargraph)
