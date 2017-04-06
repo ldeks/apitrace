@@ -38,11 +38,13 @@ qt5_add_resources(RESOURCE_ADDED_NG resources.qrc)
 
 set (UI_HDRS
   mainwindow.hpp
+  opendialog.hpp
 )
 
 set (UI_SRC
   main.cpp
   mainwindow.cpp
+  opendialog.cpp
 )
 
 add_executable(fr-new-gui

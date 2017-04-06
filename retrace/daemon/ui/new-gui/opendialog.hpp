@@ -25,34 +25,26 @@
  *   Laura Ekstrand <laura@jlekstrand.net>
  **************************************************************************/
 
-#include "mainwindow.hpp"
 
-#include <QGuiApplication>
-#include <QRect>
-#include <QScreen>
-#include <QStatusBar>
+#ifndef _OPENDIALOG_HPP_
+#define _OPENDIALOG_HPP_
 
-using glretrace::MainWindow;
-using glretrace::OpenDialog;
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QWidget>
 
-MainWindow::MainWindow() {
-  // Create a placeholder widget
-  centralWidget = new QWidget(this);
-  layout = new QVBoxLayout(centralWidget);
-  centralWidget->setLayout(layout);
-  setCentralWidget(centralWidget);
+namespace glretrace {
 
-  // Create the dialog.
-  dialog = new OpenDialog(centralWidget);
-  dialog->show();
+class OpenDialog : public QDialog {
+  Q_OBJECT
+ public:
+  explicit OpenDialog(QWidget *parent = 0);
+  virtual ~OpenDialog();
 
-  // Window finalization.
-  QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
-  // screenGeometry.moveTo(0, 0);
-  setGeometry(screenGeometry);
-  setWindowTitle("Frame Retrace");
-  statusBar()->showMessage("Ready");
-}
+ protected:
+  QVBoxLayout *layout;
+};
 
-MainWindow::~MainWindow() {
-}
+}  // namespace glretrace
+
+#endif  // _OPENDIALOG_HPP_

@@ -25,34 +25,17 @@
  *   Laura Ekstrand <laura@jlekstrand.net>
  **************************************************************************/
 
-#include "mainwindow.hpp"
+#include "opendialog.hpp"
 
-#include <QGuiApplication>
-#include <QRect>
-#include <QScreen>
-#include <QStatusBar>
-
-using glretrace::MainWindow;
 using glretrace::OpenDialog;
 
-MainWindow::MainWindow() {
-  // Create a placeholder widget
-  centralWidget = new QWidget(this);
-  layout = new QVBoxLayout(centralWidget);
-  centralWidget->setLayout(layout);
-  setCentralWidget(centralWidget);
+OpenDialog::OpenDialog(QWidget *parent) : QDialog(parent) {
+  layout = new QVBoxLayout(this);
+  setLayout(layout);
+  setModal(true);  // Defer to main GUI.
 
-  // Create the dialog.
-  dialog = new OpenDialog(centralWidget);
-  dialog->show();
-
-  // Window finalization.
-  QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
-  // screenGeometry.moveTo(0, 0);
-  setGeometry(screenGeometry);
-  setWindowTitle("Frame Retrace");
-  statusBar()->showMessage("Ready");
+  setWindowTitle("Set Trace File and Frame Number");
 }
 
-MainWindow::~MainWindow() {
+OpenDialog::~OpenDialog() {
 }
