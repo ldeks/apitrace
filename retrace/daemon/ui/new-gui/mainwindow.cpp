@@ -46,6 +46,43 @@ MainWindow::MainWindow() {
   dialog = new OpenDialog(centralWidget);
   dialog->show();
 
+  // Tool bar.
+  toolbar = addToolBar("Graph Controls");
+  toolbar->setMovable(false);
+  ylabel = new QLabel("Vertical Metric:", this);
+  ylabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  xlabel = new QLabel("Horizontal Metric:", this);
+  xlabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  metrics << "No Metric" << "Pixel Shader Active Time" <<
+                          "Fragment Shader Active Time";
+  yComboBox = new QComboBox(this);
+  yComboBox->addItems(metrics);
+  xComboBox = new QComboBox(this);
+  xComboBox->addItems(metrics);
+  filterLabel = new QLabel("Metrics Filter:", this);
+  filterLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  filter = new QLineEdit(this);
+  hspacer = new QWidget(this);
+  hspacer->resize(0, 0);
+  hspacer->setSizePolicy(QSizePolicy::MinimumExpanding,
+                         QSizePolicy::Maximum);
+
+  toolbar->addWidget(filterLabel);
+  toolbar->addWidget(filter);
+  toolbar->addWidget(hspacer);
+  toolbar->addWidget(ylabel);
+  toolbar->addWidget(yComboBox);
+  toolbar->addWidget(xlabel);
+  toolbar->addWidget(xComboBox);
+
+  // Tab Widget
+  tabs = new QTabWidget(this);
+  tabs->addTab(new QWidget(this), "Shaders");
+  tabs->addTab(new QWidget(this), "RenderTarget");
+  tabs->addTab(new QWidget(this), "API Calls");
+  tabs->addTab(new QWidget(this), "Metrics");
+  layout->addWidget(tabs);
+
   // Window finalization.
   QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
   screenGeometry.moveTo(0, 0);
