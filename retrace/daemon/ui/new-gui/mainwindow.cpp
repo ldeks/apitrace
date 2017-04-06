@@ -48,7 +48,7 @@ MainWindow::MainWindow() {
 
   // Window finalization.
   QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
-  // screenGeometry.moveTo(0, 0);
+  screenGeometry.moveTo(0, 0);
   setGeometry(screenGeometry);
   setWindowTitle("Frame Retrace");
   statusBar()->showMessage("Ready");

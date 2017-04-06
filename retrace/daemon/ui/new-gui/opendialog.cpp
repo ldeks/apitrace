@@ -27,7 +27,12 @@
 
 #include "opendialog.hpp"
 
+#include <QCoreApplication>
+#include <QFileDialog>
+#include <QIcon>
 #include <QPixmap>
+#include <QSize>
+#include <QString>
 
 using glretrace::OpenDialog;
 
@@ -40,8 +45,81 @@ OpenDialog::OpenDialog(QWidget *parent) : QDialog(parent) {
   view->setImage(QPixmap(":/images/fr.png"));
   layout->addWidget(view);
 
+  // Controls area
+  controls = new QWidget(this);
+  controlsLayout = new QGridLayout(controls);
+  controls->setLayout(controlsLayout);
+
+  // Filename area
+  fileLabel = new QLabel("Filename:", controls);
+  fileLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  controlsLayout->addWidget(fileLabel, 0, 0);
+  lineEdit = new QLineEdit(controls);
+  lineEditCompleter = new QCompleter(lineEdit);
+  lineEditCompleter->setCompletionMode(
+    QCompleter::UnfilteredPopupCompletion);
+  lineEditModel = new QFileSystemModel(lineEdit);
+  lineEditCompleter->setModel(lineEditModel);
+  lineEdit->setCompleter(lineEditCompleter);
+  controlsLayout->addWidget(lineEdit, 0, 1);
+  fileButton = new QToolButton(controls);
+  fileButton->setIcon(QIcon(":/images/document-open.png"));
+  fileButton->setToolTip("Open trace");
+  fileButton->setIconSize(QSize(24, 24));
+  connect(fileButton, SIGNAL(clicked()), this, SLOT(getFilename()));
+  controlsLayout->addWidget(fileButton, 0, 2);
+
+  // Frame area.
+  frameLabel = new QLabel("Frame:", controls);
+  frameLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  controlsLayout->addWidget(frameLabel, 1, 0);
+  frameBox = new QSpinBox(controls);
+  frameBox->setMinimum(0);
+  frameBox->setMaximum(10000);
+  frameBox->setValue(100);
+  frameBox->setAlignment(Qt::AlignRight);
+  frameBox->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+  controlsLayout->addWidget(frameBox, 1, 1);
+
+  // Host area.
+  hostLabel = new QLabel("Host:", controls);
+  hostLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  controlsLayout->addWidget(hostLabel, 2, 0);
+  hostEdit = new QLineEdit("localhost", controls);
+  controlsLayout->addWidget(hostEdit, 2, 1, 1, -1);
+
+  // Dialog bottom.
+  layout->addWidget(controls);
+  dialogButtons = new QDialogButtonBox(QDialogButtonBox::Cancel |
+                                       QDialogButtonBox::Ok);
+  connect(dialogButtons, SIGNAL(rejected()), QCoreApplication::instance(),
+          SLOT(quit()));
+  connect(dialogButtons, SIGNAL(accepted()), this, SLOT(openFile()));
+  layout->addWidget(dialogButtons);
+
   setWindowTitle("Set Trace File and Frame Number");
+  setGeometry(300, 200, 600, 500);
 }
 
 OpenDialog::~OpenDialog() {
+}
+
+void
+OpenDialog::getFilename() {
+    QString currentFname = lineEdit->text();
+    if (currentFname.isEmpty()) {
+        currentFname = "/home";
+    }
+    QString fname = QFileDialog::getOpenFileName(
+                      this, "Open File", currentFname,
+                      "Trace files (*.trace)");
+    // If user presses cancel, string will be null
+    if (!fname.isEmpty())
+        lineEdit->setText(fname);
+}
+
+void
+OpenDialog::openFile() {
+  // No-op for now
+  close();
 }

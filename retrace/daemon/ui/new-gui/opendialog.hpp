@@ -29,7 +29,15 @@
 #ifndef _OPENDIALOG_HPP_
 #define _OPENDIALOG_HPP_
 
+#include <QCompleter>
 #include <QDialog>
+#include <QDialogButtonBox>
+#include <QFileSystemModel>
+#include <QGridLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QToolButton>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -45,9 +53,25 @@ class OpenDialog : public QDialog {
   explicit OpenDialog(QWidget *parent = 0);
   virtual ~OpenDialog();
 
+ public slots:
+  void getFilename();
+  void openFile();
+
  protected:
   QVBoxLayout *layout;
   ImageView *view;
+  QWidget *controls;
+  QGridLayout *controlsLayout;
+  QLabel *fileLabel;
+  QLineEdit *lineEdit;
+  QCompleter *lineEditCompleter;
+  QFileSystemModel *lineEditModel;
+  QToolButton *fileButton;
+  QLabel *frameLabel;
+  QSpinBox *frameBox;
+  QLabel *hostLabel;
+  QLineEdit *hostEdit;
+  QDialogButtonBox *dialogButtons;
 };
 
 }  // namespace glretrace
