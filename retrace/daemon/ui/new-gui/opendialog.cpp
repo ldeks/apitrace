@@ -27,12 +27,18 @@
 
 #include "opendialog.hpp"
 
+#include <QPixmap>
+
 using glretrace::OpenDialog;
 
 OpenDialog::OpenDialog(QWidget *parent) : QDialog(parent) {
   layout = new QVBoxLayout(this);
   setLayout(layout);
   setModal(true);  // Defer to main GUI.
+
+  view = new ImageView(this);
+  view->setImage(QPixmap(":/images/fr.png"));
+  layout->addWidget(view);
 
   setWindowTitle("Set Trace File and Frame Number");
 }

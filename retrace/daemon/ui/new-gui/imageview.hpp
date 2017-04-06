@@ -26,30 +26,29 @@
  **************************************************************************/
 
 
-#ifndef _OPENDIALOG_HPP_
-#define _OPENDIALOG_HPP_
+#ifndef _IMAGEVIEW_HPP_
+#define _IMAGEVIEW_HPP_
 
-#include <QDialog>
-#include <QVBoxLayout>
+#include <QLabel>
+#include <QPixmap>
+#include <QResizeEvent>
 #include <QWidget>
-
-#include "imageview.hpp"
-
-using glretrace::ImageView;
 
 namespace glretrace {
 
-class OpenDialog : public QDialog {
+class ImageView : public QLabel {
   Q_OBJECT
  public:
-  explicit OpenDialog(QWidget *parent = 0);
-  virtual ~OpenDialog();
+  explicit ImageView(QWidget *parent = 0);
+  virtual ~ImageView();
+
+  void setImage(QPixmap p);
+  void resizeEvent(QResizeEvent *event);
 
  protected:
-  QVBoxLayout *layout;
-  ImageView *view;
+  QPixmap pixmap;
 };
 
 }  // namespace glretrace
 
-#endif  // _OPENDIALOG_HPP_
+#endif  // _IMAGEVIEW_HPP_

@@ -25,31 +25,35 @@
  *   Laura Ekstrand <laura@jlekstrand.net>
  **************************************************************************/
 
-
-#ifndef _OPENDIALOG_HPP_
-#define _OPENDIALOG_HPP_
-
-#include <QDialog>
-#include <QVBoxLayout>
-#include <QWidget>
-
 #include "imageview.hpp"
+
+#include <QSizePolicy>
 
 using glretrace::ImageView;
 
-namespace glretrace {
+ImageView::ImageView(QWidget *parent) : QLabel(parent) {
+  setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  setAlignment(Qt::AlignCenter);
+}
 
-class OpenDialog : public QDialog {
-  Q_OBJECT
- public:
-  explicit OpenDialog(QWidget *parent = 0);
-  virtual ~OpenDialog();
+ImageView::~ImageView() {
+}
 
- protected:
-  QVBoxLayout *layout;
-  ImageView *view;
-};
+void
+ImageView::setImage(QPixmap p) {
+  if (p.isNull())
+    return;
 
-}  // namespace glretrace
+  pixmap = p;
+  setPixmap(pixmap.scaled(size(), Qt::KeepAspectRatio,
+                                  Qt::SmoothTransformation));
+}
 
-#endif  // _OPENDIALOG_HPP_
+void
+ImageView::resizeEvent(QResizeEvent *event) {
+  if (pixmap.isNull())
+    return;
+
+  setPixmap(pixmap.scaled(size(), Qt::KeepAspectRatio,
+                                  Qt::SmoothTransformation));
+}
