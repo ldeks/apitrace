@@ -25,53 +25,34 @@
  *   Laura Ekstrand <laura@jlekstrand.net>
  **************************************************************************/
 
-
-#ifndef _MAINWINDOW_HPP_
-#define _MAINWINDOW_HPP_
-
-#include <QAction>
-#include <QComboBox>
-#include <QHBoxLayout>
-#include <QMainWindow>
-#include <QLabel>
-#include <QLineEdit>
-#include <QStringList>
-#include <QTabWidget>
-#include <QVBoxLayout>
-#include <QWidget>
-
-#include "opendialog.hpp"
 #include "graphwindow.hpp"
 
 using glretrace::GraphWindow;
-using glretrace::OpenDialog;
 
-namespace glretrace {
+GraphWindow::GraphWindow(UpdateBehavior updateBehavior,
+                         QWindow* parent) :
+                         QOpenGLWindow(updateBehavior, parent),
+                         renderer(NULL) {
+}
 
-class MainWindow : public QMainWindow {
-  Q_OBJECT
- public:
-  MainWindow();
-  ~MainWindow();
+GraphWindow::~GraphWindow() {
+  delete renderer;
+}
 
- protected:
-  QWidget *centralWidget;
-  QVBoxLayout *layout;
-  OpenDialog *dialog;
-  GraphWindow *graph;
-  QWidget *graphContainer;
-  QWidget *metricsBar;
-  QHBoxLayout *metricsBarLayout;
-  QLabel *ylabel;
-  QLabel *xlabel;
-  QStringList metrics;
-  QComboBox *yComboBox;
-  QComboBox *xComboBox;
-  QLabel *filterLabel;
-  QLineEdit *filter;
-  QTabWidget *tabs;
-};
+void
+GraphWindow::initializeGL() {
+  delete renderer;
+  renderer = new BarGraphRenderer(true);
+}
 
-}  // namespace glretrace
+void
+GraphWindow::paintGL() {
+  if (renderer)
+    renderer->render();
+}
 
-#endif  // _MAINWINDOW_HPP_
+void
+GraphWindow::resizeGL(int w, int h) {
+  if (renderer)
+    renderer->setMouseArea(0, 0, w, h);
+}

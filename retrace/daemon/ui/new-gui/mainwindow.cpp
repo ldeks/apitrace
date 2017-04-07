@@ -30,6 +30,7 @@
 #include <QGuiApplication>
 #include <QRect>
 #include <QScreen>
+#include <QSizePolicy>
 #include <QStatusBar>
 
 using glretrace::MainWindow;
@@ -45,6 +46,13 @@ MainWindow::MainWindow() {
   // Create the dialog.
   dialog = new OpenDialog(centralWidget);
   dialog->show();
+
+  // Graph
+  graph = new GraphWindow();
+  graphContainer = QWidget::createWindowContainer(graph, centralWidget);
+  graphContainer->setSizePolicy(QSizePolicy::Expanding,
+                                QSizePolicy::Expanding);
+  layout->addWidget(graphContainer);
 
   // Tool bar.
   metricsBar = new QWidget(this);
@@ -89,4 +97,5 @@ MainWindow::MainWindow() {
 }
 
 MainWindow::~MainWindow() {
+  delete graph;
 }

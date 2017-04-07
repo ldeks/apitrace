@@ -40,6 +40,8 @@ set (UI_HDRS
   mainwindow.hpp
   opendialog.hpp
   imageview.hpp
+  graphwindow.hpp
+  ../../bargraph/glframe_bargraph.hpp
 )
 
 set (UI_SRC
@@ -47,6 +49,8 @@ set (UI_SRC
   mainwindow.cpp
   opendialog.cpp
   imageview.cpp
+  graphwindow.cpp
+  ../../bargraph/glframe_bargraph.cpp
 )
 
 add_executable(fr-new-gui
