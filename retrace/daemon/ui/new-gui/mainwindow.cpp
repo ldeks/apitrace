@@ -49,9 +49,9 @@ MainWindow::MainWindow() {
   // Tool bar.
   toolbar = addToolBar("Graph Controls");
   toolbar->setMovable(false);
-  ylabel = new QLabel("Vertical Metric:", this);
+  ylabel = new QLabel("Vertical Metric: ", this);
   ylabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  xlabel = new QLabel("Horizontal Metric:", this);
+  xlabel = new QLabel("Horizontal Metric: ", this);
   xlabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   metrics << "No Metric" << "Pixel Shader Active Time" <<
                           "Fragment Shader Active Time";

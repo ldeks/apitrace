@@ -59,6 +59,7 @@ OpenDialog::OpenDialog(QWidget *parent) : QDialog(parent) {
   lineEditCompleter->setCompletionMode(
     QCompleter::UnfilteredPopupCompletion);
   lineEditModel = new QFileSystemModel(lineEdit);
+  lineEditModel->setRootPath("/home");
   lineEditCompleter->setModel(lineEditModel);
   lineEdit->setCompleter(lineEditCompleter);
   controlsLayout->addWidget(lineEdit, 0, 1);
