@@ -47,11 +47,13 @@ MainWindow::MainWindow() {
   dialog->show();
 
   // Tool bar.
-  toolbar = addToolBar("Graph Controls");
-  toolbar->setMovable(false);
-  ylabel = new QLabel("Vertical Metric: ", this);
+  metricsBar = new QWidget(this);
+  metricsBarLayout = new QHBoxLayout(metricsBar);
+  metricsBar->setLayout(metricsBarLayout);
+  layout->addWidget(metricsBar);
+  ylabel = new QLabel("Vertical Metric:", this);
   ylabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  xlabel = new QLabel("Horizontal Metric: ", this);
+  xlabel = new QLabel("Horizontal Metric:", this);
   xlabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   metrics << "No Metric" << "Pixel Shader Active Time" <<
                           "Fragment Shader Active Time";
@@ -62,18 +64,13 @@ MainWindow::MainWindow() {
   filterLabel = new QLabel("Metrics Filter:", this);
   filterLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   filter = new QLineEdit(this);
-  hspacer = new QWidget(this);
-  hspacer->resize(0, 0);
-  hspacer->setSizePolicy(QSizePolicy::MinimumExpanding,
-                         QSizePolicy::Maximum);
-
-  toolbar->addWidget(filterLabel);
-  toolbar->addWidget(filter);
-  toolbar->addWidget(hspacer);
-  toolbar->addWidget(ylabel);
-  toolbar->addWidget(yComboBox);
-  toolbar->addWidget(xlabel);
-  toolbar->addWidget(xComboBox);
+  filter->setClearButtonEnabled(true);
+  metricsBarLayout->addWidget(filterLabel);
+  metricsBarLayout->addWidget(filter);
+  metricsBarLayout->addWidget(ylabel);
+  metricsBarLayout->addWidget(yComboBox);
+  metricsBarLayout->addWidget(xlabel);
+  metricsBarLayout->addWidget(xComboBox);
 
   // Tab Widget
   tabs = new QTabWidget(this);
