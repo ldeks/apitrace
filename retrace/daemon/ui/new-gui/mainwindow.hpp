@@ -57,6 +57,7 @@ class MainWindow : public QMainWindow {
 
  protected:
   QSplitter *splitter;
+  static const char *handleStyleSheet;
   OpenDialog *dialog;
   QWidget *graphArea;
   QVBoxLayout *graphAreaLayout;

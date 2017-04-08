@@ -36,10 +36,30 @@
 using glretrace::MainWindow;
 using glretrace::OpenDialog;
 
+// From Qt style sheets examples "Customizing QSplitter"
+const char *
+MainWindow::handleStyleSheet =
+    "QSplitter::handle {\n"
+    "  image: url(:images/drag-me.png);\n"
+    "}\n"
+    "\n"
+    "QSplitter::handle:horizontal {\n"
+    "  width: 11px;\n"
+    "}\n"
+    "\n"
+    "QSplitter::handle:vertical {\n"
+    "  height: 2px;\n"
+    "}\n"
+    "\n"
+    "QSplitter::handle:pressed {\n"
+    "  image: url(:images/drag-me-pressed.png);\n"
+    "}";
+
 MainWindow::MainWindow() {
   // Create a placeholder widget
   splitter = new QSplitter(Qt::Vertical, this);
   setCentralWidget(splitter);
+  splitter->setStyleSheet(handleStyleSheet);
 
   // Graph
   graphArea = new QWidget(this);
