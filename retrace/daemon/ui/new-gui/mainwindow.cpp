@@ -41,10 +41,6 @@ MainWindow::MainWindow() {
   splitter = new QSplitter(Qt::Vertical, this);
   setCentralWidget(splitter);
 
-  // Create the dialog.
-  dialog = new OpenDialog(this);
-  dialog->show();
-
   // Graph
   graphArea = new QWidget(this);
   graphAreaLayout = new QVBoxLayout(graphArea);
@@ -98,6 +94,11 @@ MainWindow::MainWindow() {
   setGeometry(screenGeometry);
   setWindowTitle("Frame Retrace");
   statusBar()->showMessage("Ready");
+
+  // Create the dialog.
+  dialog = new OpenDialog(this);
+  show();
+  dialog->exec();
 }
 
 MainWindow::~MainWindow() {
