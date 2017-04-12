@@ -44,8 +44,6 @@
 #include "imageview.hpp"
 #include "uimodel.hpp"
 
-using glretrace::ImageView;
-
 namespace glretrace {
 
 class OpenDialog : public QDialog {
