@@ -37,6 +37,9 @@
 using glretrace::OpenDialog;
 
 OpenDialog::OpenDialog(QWidget *parent) : QDialog(parent) {
+  model = NULL;
+
+  // UI setup
   layout = new QVBoxLayout(this);
   setLayout(layout);
   setModal(true);  // Defer to main GUI.
@@ -121,6 +124,15 @@ OpenDialog::getFilename() {
 
 void
 OpenDialog::openFile() {
-  // No-op for now
-  close();
+  if (model == NULL)
+    return;
+
+  if (!model->setFrame(lineEdit->text(), frameBox->value(),
+                       hostEdit->text())) {
+    // There was an error.
+
+  } else {
+    // No-op for now
+    close();
+  }
 }
