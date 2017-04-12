@@ -45,7 +45,6 @@
 #include "graphwindow.hpp"
 #include "uimodel.hpp"
 
-using glretrace::GraphWindow;
 using glretrace::OpenDialog;
 using glretrace::UiModel;
 

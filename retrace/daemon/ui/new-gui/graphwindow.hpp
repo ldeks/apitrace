@@ -34,8 +34,6 @@
 
 #include "glframe_bargraph.hpp"
 
-using glretrace::BarGraphRenderer;
-
 namespace glretrace {
 
 class GraphWindow : public QOpenGLWindow {

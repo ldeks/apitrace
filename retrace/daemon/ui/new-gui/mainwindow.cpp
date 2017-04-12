@@ -33,6 +33,7 @@
 #include <QSizePolicy>
 #include <QStatusBar>
 
+using glretrace::GraphWindow;
 using glretrace::MainWindow;
 using glretrace::OpenDialog;
 
