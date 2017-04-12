@@ -46,7 +46,6 @@
 #include "uimodel.hpp"
 
 using glretrace::OpenDialog;
-using glretrace::UiModel;
 
 namespace glretrace {
 

@@ -39,8 +39,13 @@
 #include "glframe_socket.hpp"
 #include "../glframe_qutil.hpp"
 
+using glretrace::FrameRetraceStub;
+using glretrace::FrameState;
+using glretrace::OnFrameRetrace;
+using glretrace::QSelection;
 using glretrace::UiModel;
 using glretrace::RenderSelection;
+using glretrace::SelectionId;
 using glretrace::ServerSocket;
 
 UiModel::UiModel() : m_state(NULL),

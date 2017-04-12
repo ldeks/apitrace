@@ -37,12 +37,6 @@
 #include "glframe_retrace_interface.hpp"
 #include "glframe_retrace_stub.hpp"
 
-using glretrace::FrameRetraceStub;
-using glretrace::FrameState;
-using glretrace::OnFrameRetrace;
-using glretrace::QSelection;
-using glretrace::SelectionId;
-
 namespace glretrace {
 
 class UiModel : public QObject,
