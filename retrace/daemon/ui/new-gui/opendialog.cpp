@@ -34,6 +34,7 @@
 #include <QSize>
 #include <QString>
 
+using glretrace::ImageView;
 using glretrace::OpenDialog;
 using glretrace::UiModel;
 
