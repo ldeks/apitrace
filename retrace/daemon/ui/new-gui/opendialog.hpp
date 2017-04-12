@@ -45,7 +45,6 @@
 #include "uimodel.hpp"
 
 using glretrace::ImageView;
-using glretrace::UiModel;
 
 namespace glretrace {
 

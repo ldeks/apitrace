@@ -35,6 +35,7 @@
 #include <QString>
 
 using glretrace::OpenDialog;
+using glretrace::UiModel;
 
 OpenDialog::OpenDialog(QWidget *parent) : QDialog(parent) {
   model = NULL;
