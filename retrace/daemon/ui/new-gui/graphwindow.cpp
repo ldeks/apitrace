@@ -27,6 +27,7 @@
 
 #include "graphwindow.hpp"
 
+using glretrace::BarGraphRenderer;
 using glretrace::GraphWindow;
 
 GraphWindow::GraphWindow(UpdateBehavior updateBehavior,
