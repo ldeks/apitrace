@@ -45,8 +45,6 @@
 #include "graphwindow.hpp"
 #include "uimodel.hpp"
 
-using glretrace::OpenDialog;
-
 namespace glretrace {
 
 class MainWindow : public QMainWindow {
