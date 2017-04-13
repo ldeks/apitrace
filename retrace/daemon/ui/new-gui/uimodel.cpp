@@ -155,7 +155,7 @@ void
 UiModel::onFileOpening(bool needUpload,
                        bool finished,
                        uint32_t frame_count) {
-
+  emit frameCountChanged(frame_count);
 }
 
 void
