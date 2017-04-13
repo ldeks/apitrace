@@ -84,6 +84,9 @@ class UiModel : public QObject,
              const std::vector<std::string> &api_calls);
   void onError(ErrorSeverity s, const std::string &message);
 
+ signals:
+  void frameCountChanged(uint32_t frameCount);
+
  private:
   FrameRetraceStub m_retrace;
   FrameState *m_state;
