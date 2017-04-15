@@ -93,7 +93,6 @@ class UiModel : public QObject,
   QSelection *m_selection;
   SelectionId m_selection_count;
   QList<int> m_cached_selection;
-  QString main_exe;  // for path to frame_retrace_server
   int m_target_frame_number;
 };
 
