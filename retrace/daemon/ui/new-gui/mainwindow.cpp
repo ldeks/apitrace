@@ -165,7 +165,7 @@ MainWindow::openFile(QString filename, int frameCount,
 }
 
 void
-MainWindow::updateProgress(uint32_t count) {
+MainWindow::updateProgress(int count) {
   pbar->setValue(count);
   QString message;
   QTextStream(&message) << "Retracing frame "
