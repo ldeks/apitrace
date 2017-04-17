@@ -86,6 +86,7 @@ class UiModel : public QObject,
 
  signals:
   void frameCountChanged(int frameCount);
+  void fileLoadFinished();
 
  private:
   FrameRetraceStub m_retrace;

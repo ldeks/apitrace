@@ -154,6 +154,8 @@ MainWindow::setModel(UiModel* mdl) {
   dialog->setModel(model);
   connect(model, &UiModel::frameCountChanged,
           this, &MainWindow::updateProgress);
+  connect(model, &UiModel::fileLoadFinished,
+          this, &MainWindow::propagateFileData);
 }
 
 void
@@ -171,4 +173,10 @@ MainWindow::updateProgress(int count) {
   QTextStream(&message) << "Retracing frame "
                         << QString::number(count);
   statusBar()->showMessage(message);
+}
+
+void
+MainWindow::propagateFileData() {
+  pbar->setVisible(false);
+  statusBar()->clearMessage();
 }
