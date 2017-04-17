@@ -64,7 +64,7 @@ class MainWindow : public QMainWindow {
 
  public slots:
   void openFile(QString filename, int frameCount, QString hostname);
-  void updateProgress(uint32_t count);
+  void updateProgress(int count);
 
  protected:
   // Ui objects
