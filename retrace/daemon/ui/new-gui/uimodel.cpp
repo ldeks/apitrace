@@ -145,6 +145,7 @@ UiModel::setSelection(QSelection *s) {
   m_selection = s;
 }
 
+// Automatically called when file is opened to give status updates
 void
 UiModel::onFileOpening(bool needUpload,
                        bool finished,
@@ -172,12 +173,17 @@ UiModel::onRenderTarget(SelectionId selectionCount,
                         const uvec & pngImageData) {
 }
 
+// Automatically called when file is opened to give this model
+// a list of the available metrics for the file.
 void
 UiModel::onMetricList(const std::vector<MetricId> &ids,
                       const std::vector<std::string> &names,
                       const std::vector<std::string> &descriptions) {
 }
 
+// When FrameRetraceStub's method retrace is called,
+// this is automatically called to receive bar width and height data
+// for forwarding to the graph widget.
 void
 UiModel::onMetrics(const MetricSeries &metricData,
                    ExperimentId experimentCount,
