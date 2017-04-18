@@ -1,6 +1,6 @@
 /**************************************************************************
  *
- * Copyright 2015 Intel Corporation
+ * Copyright 2017 Intel Corporation
  * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  *
  * Authors:
- *   Mark Janes <mark.a.janes@intel.com>
+ *   Laura Ekstrand <laura@jlekstrand.net>
  **************************************************************************/
 
 #include "uimodel.hpp"
