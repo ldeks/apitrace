@@ -57,3 +57,8 @@ GraphWindow::resizeGL(int w, int h) {
   if (renderer)
     renderer->setMouseArea(0, 0, w, h);
 }
+
+void
+GraphWindow::setBars(QVector<BarMetrics> bars) {
+  renderer->setBars(bars.toStdVector());
+}

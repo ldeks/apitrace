@@ -47,6 +47,7 @@
 #include "opendialog.hpp"
 #include "graphwindow.hpp"
 #include "uimodel.hpp"
+#include "glframe_bargraph.hpp"
 
 namespace glretrace {
 
@@ -67,8 +68,10 @@ class MainWindow : public QMainWindow {
  public slots:
   void initMetricsTools(QStringList names);
   void openFile(QString filename, int frameCount, QString hostname);
+  void requestGraphData(QString name);
   void updateProgress(int count);
   void propagateFileData();
+  void updateGraphData(QString name, QVector<float> data);
 
  protected:
   // Ui objects
@@ -94,6 +97,11 @@ class MainWindow : public QMainWindow {
 
   // Model
   UiModel* model;
+
+  // Gui Data
+  // Later, we'll move this so it better corresponds to
+  // the model-view-controller framework.
+  QVector<BarMetrics> graphData;
 };
 
 }  // namespace glretrace
