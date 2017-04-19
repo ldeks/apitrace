@@ -151,6 +151,13 @@ UiModel::setSelection(QSelection *s) {
   m_selection = s;
 }
 
+void
+UiModel::requestGraphData(QString name) {
+  std::vector<MetricId> ids;
+  ids.push_back(m_metric_model->getId(name));
+  m_retrace.retraceMetrics(ids, ExperimentId(0), this);
+}
+
 // Automatically called when file is opened to give status updates
 void
 UiModel::onFileOpening(bool needUpload,
@@ -159,6 +166,11 @@ UiModel::onFileOpening(bool needUpload,
   emit frameCountChanged(frame_count);
   if (finished) {
     emit fileLoadFinished();
+
+    // Make a request for a set of NULL (width = 1.0) data.
+    std::vector<MetricId> ids;
+    ids.push_back(MetricId(0));
+    m_retrace.retraceMetrics(ids, ExperimentId(0), this);
   }
 }
 
@@ -197,6 +209,10 @@ void
 UiModel::onMetrics(const MetricSeries &metricData,
                    ExperimentId experimentCount,
                    SelectionId selectionCount) {
+  // Resolve the name and pass on the data.
+  QString name = m_metric_model->getName(metricData.metric);
+  emit graphDataReceived(name,
+    QVector<float>::fromStdVector(metricData.data));
 }
 
 void

@@ -142,6 +142,12 @@ MainWindow::connectSignals() {
   connect(filter, &QLineEdit::textChanged, metricsProxy,
           static_cast<void (QSortFilterProxyModel::*)(const QString&)>
           (&QSortFilterProxyModel::setFilterRegExp));
+  connect(yComboBox, static_cast<void(QComboBox::*)(int)>
+                     (&QComboBox::currentIndexChanged),
+          [=]() { this->requestGraphData(yComboBox->currentText()); });
+  connect(xComboBox, static_cast<void(QComboBox::*)(int)>
+                     (&QComboBox::currentIndexChanged),
+          [=]() { this->requestGraphData(xComboBox->currentText()); });
 }
 
 void
@@ -161,6 +167,8 @@ MainWindow::setModel(UiModel* mdl) {
           this, &MainWindow::propagateFileData);
   connect(model, &UiModel::metricNamesReceived,
           this, &MainWindow::initMetricsTools);
+  connect(model, &UiModel::graphDataReceived,
+          this, &MainWindow::updateGraphData);
 }
 
 void
@@ -196,4 +204,51 @@ MainWindow::initMetricsTools(QStringList names) {
   yComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContentsOnFirstShow);
   xComboBox->setModel(metricsProxy);
   xComboBox->setSizeAdjustPolicy(QComboBox::AdjustToContentsOnFirstShow);
+}
+
+void
+MainWindow::requestGraphData(QString name) {
+  model->requestGraphData(name);
+}
+
+void
+MainWindow::updateGraphData(QString name, QVector<float> data) {
+  // In the future, graph should just take two std::vectors of data
+  // rather than BarMetrics, so updates can be implicitly shared.
+  if (name == QString()) {
+    name = QString("None");
+  }
+  statusBar()->showMessage(name);
+
+  if (graphData.isEmpty()) {
+     for (int i = 0; i < data.size(); i++) {
+       BarMetrics temp;
+       temp.height = data[i];
+       temp.width = data[i];
+       graphData.append(temp);
+     }
+  } else if ((name == yComboBox->currentText()) &&
+             (name == xComboBox->currentText())) {
+     // No way of knowing which dimension should be updated,
+     // so we update both.
+     graphData.clear(); // As of Qt 5.7, this preserves capacity.
+     for (int i = 0; i < data.size(); i++) {
+       BarMetrics temp;
+       temp.height = data[i];
+       temp.width = data[i];
+       graphData.append(temp);
+     }
+  } else if (name == yComboBox->currentText()) {
+    assert(data.size() == graphData.size());
+    for (int i = 0; i < data.size(); i++) {
+      graphData[i].height = data[i];
+    }
+  } else if (name == xComboBox->currentText()) {
+    assert(data.size() == graphData.size());
+    for (int i = 0; i < data.size(); i++) {
+      graphData[i].width = data[i];
+    }
+  }
+
+  graph->setBars(graphData);
 }

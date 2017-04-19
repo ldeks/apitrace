@@ -32,6 +32,8 @@
 #include <QOpenGLWindow>
 #include <QWindow>
 
+#include <vector>
+
 #include "glframe_bargraph.hpp"
 
 namespace glretrace {
@@ -52,6 +54,8 @@ class GraphWindow : public QOpenGLWindow {
   void initializeGL();
   void paintGL();
   void resizeGL(int w, int h);
+
+  void setBars(QVector<BarMetrics> bars);
 
  protected:
   BarGraphRenderer *renderer;

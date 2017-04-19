@@ -54,11 +54,16 @@ class MetricModel : public QObject {
 
   MetricId getId(QString name);
   // QVector, QList, and QStringList are implicitly shared, so this is fast.
+  QString getName(MetricId id);
   QVector<QString> getNames();
   QStringList getNamesList();
 
+ private:
+  static QString hashId(MetricId id);
+
  protected:
   QHash<QString, int> indicesByName;
+  QHash<QString, int> indicesById;
   QVector<QString> names;
   QVector<MetricId> ids;
   QVector<QString> descriptions;
