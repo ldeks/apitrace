@@ -77,6 +77,26 @@ MainWindow::MainWindow() {
                                 QSizePolicy::Expanding);
   graphAreaLayout->addWidget(graphContainer);
 
+  // Graph Tools
+  graphToolsArea = new QWidget(this);
+  graphToolsAreaLayout = new QHBoxLayout(graphToolsArea);
+  graphToolsArea->setLayout(graphToolsAreaLayout);
+  zoomInButton = new QToolButton(this);
+  zoomInButton->setIcon(QIcon(":/images/zoom-in-symbolic.symbolic.png"));
+  zoomInButton->setToolTip("Zoom in");
+  zoomInButton->setIconSize(QSize(24, 24));
+  connect(zoomInButton, &QToolButton::clicked,
+          this, &MainWindow::zoomIn);
+  zoomOutButton = new QToolButton(this);
+  zoomOutButton->setIcon(QIcon(":/images/zoom-out-symbolic.symbolic.png"));
+  zoomOutButton->setToolTip("Zoom out");
+  zoomOutButton->setIconSize(QSize(24, 24));
+  connect(zoomOutButton, &QToolButton::clicked,
+          this, &MainWindow::zoomOut);
+  graphToolsAreaLayout->addWidget(zoomOutButton);
+  graphToolsAreaLayout->addWidget(zoomInButton);
+  graphAreaLayout->addWidget(graphToolsArea);
+
   // Tool bar.
   metricsBar = new QWidget(this);
   metricsBarLayout = new QHBoxLayout(metricsBar);
@@ -251,4 +271,14 @@ MainWindow::updateGraphData(QString name, QVector<float> data) {
   }
 
   graph->setBars(graphData);
+}
+
+void
+MainWindow::zoomIn() {
+  statusBar()->showMessage("Zoom In");
+}
+
+void
+MainWindow::zoomOut() {
+  statusBar()->showMessage("Zoom Out");
 }

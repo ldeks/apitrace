@@ -72,6 +72,8 @@ class MainWindow : public QMainWindow {
   void updateProgress(int count);
   void propagateFileData();
   void updateGraphData(QString name, QVector<float> data);
+  void zoomIn();
+  void zoomOut();
 
  protected:
   // Ui objects
@@ -82,6 +84,10 @@ class MainWindow : public QMainWindow {
   QVBoxLayout *graphAreaLayout;
   GraphWindow *graph;
   QWidget *graphContainer;
+  QWidget *graphToolsArea;
+  QHBoxLayout *graphToolsAreaLayout;
+  QToolButton *zoomInButton;
+  QToolButton *zoomOutButton;
   QWidget *metricsBar;
   QHBoxLayout *metricsBarLayout;
   QLabel *ylabel;
