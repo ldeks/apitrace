@@ -36,6 +36,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QProgressBar>
+#include <QScrollBar>
 #include <QSplitter>
 #include <QStringList>
 #include <QStringListModel>
@@ -87,6 +88,7 @@ class MainWindow : public QMainWindow {
   QWidget *graphToolsArea;
   QHBoxLayout *graphToolsAreaLayout;
   QToolButton *zoomInButton;
+  QScrollBar *scroll;
   QToolButton *zoomOutButton;
   QWidget *metricsBar;
   QHBoxLayout *metricsBarLayout;
