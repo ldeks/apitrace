@@ -84,16 +84,20 @@ MainWindow::MainWindow() {
   zoomInButton = new QToolButton(this);
   zoomInButton->setIcon(QIcon(":/images/zoom-in-symbolic.symbolic.png"));
   zoomInButton->setToolTip("Zoom in");
-  zoomInButton->setIconSize(QSize(24, 24));
+  zoomInButton->setIconSize(QSize(16, 16));
+  zoomInButton->setAutoRaise(true);
   connect(zoomInButton, &QToolButton::clicked,
           this, &MainWindow::zoomIn);
+  scroll = new QScrollBar(Qt::Horizontal, this);
   zoomOutButton = new QToolButton(this);
   zoomOutButton->setIcon(QIcon(":/images/zoom-out-symbolic.symbolic.png"));
   zoomOutButton->setToolTip("Zoom out");
-  zoomOutButton->setIconSize(QSize(24, 24));
+  zoomOutButton->setIconSize(QSize(16, 16));
+  zoomOutButton->setAutoRaise(true);
   connect(zoomOutButton, &QToolButton::clicked,
           this, &MainWindow::zoomOut);
   graphToolsAreaLayout->addWidget(zoomOutButton);
+  graphToolsAreaLayout->addWidget(scroll);
   graphToolsAreaLayout->addWidget(zoomInButton);
   graphAreaLayout->addWidget(graphToolsArea);
 
