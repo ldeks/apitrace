@@ -29,8 +29,39 @@
 
 using glretrace::ZoomBar;
 
+// From Qt style sheets examples "Customizing QScrollBar"
+const char *
+ZoomBar::scrollStyleSheet =
+    "QToolButton {\n"
+    "  height: 20px;\n"
+    "  border: 2px;\n"
+    "  background: #808080;\n"
+    "}\n"
+    "\n"
+    "QScrollBar {\n"
+    "  height: 23px;\n"
+    "}\n"
+    "QScrollBar::horizontal {\n"
+    "  background: #808080;\n"
+    "}\n"
+    "\n"
+    "QScrollBar::handle:horizontal {\n"
+    "  background: #363636;\n"
+    "}\n"
+    "\n"
+    "QScrollBar::add-line:horizontal {\n"
+    "  background: #808080;\n"
+    "}\n"
+    "\n"
+    "QScrollBar::sub-line:horizontal {\n"
+    "  background: #808080;\n"
+    "}";
+
+
 ZoomBar::ZoomBar(QWidget *parent) : QWidget(parent) {
   layout = new QHBoxLayout(this);
+  layout->setSpacing(0);
+  layout->setContentsMargins(0, 0, 0, 0);
   setLayout(layout);
   zoomInButton = new QToolButton(this);
   zoomInButton->setIcon(QIcon(":/images/zoom-in-symbolic.symbolic.png"));
@@ -40,6 +71,7 @@ ZoomBar::ZoomBar(QWidget *parent) : QWidget(parent) {
   connect(zoomInButton, &QToolButton::clicked,
           this, &ZoomBar::zoomIn);
   scroll = new QScrollBar(Qt::Horizontal, this);
+  setStyleSheet(scrollStyleSheet);
   zoomOutButton = new QToolButton(this);
   zoomOutButton->setIcon(QIcon(":/images/zoom-out-symbolic.symbolic.png"));
   zoomOutButton->setToolTip("Zoom out");

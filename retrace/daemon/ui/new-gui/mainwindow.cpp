@@ -70,6 +70,7 @@ MainWindow::MainWindow() {
   // Graph
   graphArea = new QWidget(this);
   graphAreaLayout = new QVBoxLayout(graphArea);
+  graphAreaLayout->setSpacing(0);
   graphArea->setLayout(graphAreaLayout);
   graph = new GraphWindow();
   graphContainer = QWidget::createWindowContainer(graph, this);
