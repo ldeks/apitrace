@@ -76,30 +76,8 @@ MainWindow::MainWindow() {
   graphContainer->setSizePolicy(QSizePolicy::Expanding,
                                 QSizePolicy::Expanding);
   graphAreaLayout->addWidget(graphContainer);
-
-  // Graph Tools
-  graphToolsArea = new QWidget(this);
-  graphToolsAreaLayout = new QHBoxLayout(graphToolsArea);
-  graphToolsArea->setLayout(graphToolsAreaLayout);
-  zoomInButton = new QToolButton(this);
-  zoomInButton->setIcon(QIcon(":/images/zoom-in-symbolic.symbolic.png"));
-  zoomInButton->setToolTip("Zoom in");
-  zoomInButton->setIconSize(QSize(16, 16));
-  zoomInButton->setAutoRaise(true);
-  connect(zoomInButton, &QToolButton::clicked,
-          this, &MainWindow::zoomIn);
-  scroll = new QScrollBar(Qt::Horizontal, this);
-  zoomOutButton = new QToolButton(this);
-  zoomOutButton->setIcon(QIcon(":/images/zoom-out-symbolic.symbolic.png"));
-  zoomOutButton->setToolTip("Zoom out");
-  zoomOutButton->setIconSize(QSize(16, 16));
-  zoomOutButton->setAutoRaise(true);
-  connect(zoomOutButton, &QToolButton::clicked,
-          this, &MainWindow::zoomOut);
-  graphToolsAreaLayout->addWidget(zoomOutButton);
-  graphToolsAreaLayout->addWidget(scroll);
-  graphToolsAreaLayout->addWidget(zoomInButton);
-  graphAreaLayout->addWidget(graphToolsArea);
+  zoomBar = new ZoomBar(this);
+  graphAreaLayout->addWidget(zoomBar);
 
   // Tool bar.
   metricsBar = new QWidget(this);
@@ -172,6 +150,8 @@ MainWindow::connectSignals() {
   connect(xComboBox, static_cast<void(QComboBox::*)(int)>
                      (&QComboBox::currentIndexChanged),
           [=]() { this->requestGraphData(xComboBox->currentText()); });
+  connect(zoomBar, &ZoomBar::zoomIn, this, &MainWindow::zoomIn);
+  connect(zoomBar, &ZoomBar::zoomOut, this, &MainWindow::zoomOut);
 }
 
 void

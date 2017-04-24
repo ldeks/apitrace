@@ -31,12 +31,10 @@
 
 #include <QAction>
 #include <QComboBox>
-#include <QHBoxLayout>
 #include <QMainWindow>
 #include <QLabel>
 #include <QLineEdit>
 #include <QProgressBar>
-#include <QScrollBar>
 #include <QSplitter>
 #include <QStringList>
 #include <QStringListModel>
@@ -49,6 +47,7 @@
 #include "graphwindow.hpp"
 #include "uimodel.hpp"
 #include "glframe_bargraph.hpp"
+#include "zoombar.hpp"
 
 namespace glretrace {
 
@@ -73,6 +72,7 @@ class MainWindow : public QMainWindow {
   void updateProgress(int count);
   void propagateFileData();
   void updateGraphData(QString name, QVector<float> data);
+
   void zoomIn();
   void zoomOut();
 
@@ -85,11 +85,7 @@ class MainWindow : public QMainWindow {
   QVBoxLayout *graphAreaLayout;
   GraphWindow *graph;
   QWidget *graphContainer;
-  QWidget *graphToolsArea;
-  QHBoxLayout *graphToolsAreaLayout;
-  QToolButton *zoomInButton;
-  QScrollBar *scroll;
-  QToolButton *zoomOutButton;
+  ZoomBar *zoomBar;
   QWidget *metricsBar;
   QHBoxLayout *metricsBarLayout;
   QLabel *ylabel;
