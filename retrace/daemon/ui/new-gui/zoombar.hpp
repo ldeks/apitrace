@@ -51,6 +51,7 @@ class ZoomBar : public QWidget {
   QToolButton *zoomInButton;
   QScrollBar *scroll;
   QToolButton *zoomOutButton;
+  static const char *scrollStyleSheet;
 };
 
 }  // namespace glretrace
