@@ -130,7 +130,9 @@ GraphWindow::mouseWheel(int degrees, float zoom_point_x) {
     new_translate = 0;
 
   translation = new_translate;
+  emit translationChanged(translation);
   zoom = new_zoom;
+  emit zoomChanged(zoom);
 
   if (renderer)
     renderer->setZoom(zoom, translation);

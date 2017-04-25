@@ -74,6 +74,10 @@ class GraphWindow : public QOpenGLWindow,
   // Subscriber function
   void onBarSelect(const std::vector<int> selection);
 
+ signals:
+  void translationChanged(float value);
+  void zoomChanged(float value);
+
  protected:
   BarGraphRenderer *renderer;
   QPointF startPos;
