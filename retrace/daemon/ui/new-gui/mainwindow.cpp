@@ -153,6 +153,10 @@ MainWindow::connectSignals() {
           [=]() { this->requestGraphData(xComboBox->currentText()); });
   connect(zoomBar, &ZoomBar::zoomIn, this, &MainWindow::zoomIn);
   connect(zoomBar, &ZoomBar::zoomOut, this, &MainWindow::zoomOut);
+  connect(graph, &GraphWindow::translationChanged,
+          zoomBar, &ZoomBar::setTranslation);
+  connect(graph, &GraphWindow::zoomChanged,
+          zoomBar, &ZoomBar::setZoom);
 }
 
 void
@@ -261,9 +265,11 @@ MainWindow::updateGraphData(QString name, QVector<float> data) {
 void
 MainWindow::zoomIn() {
   statusBar()->showMessage("Zoom In");
+  graph->mouseWheel(45, 0.5);
 }
 
 void
 MainWindow::zoomOut() {
   statusBar()->showMessage("Zoom Out");
+  graph->mouseWheel(-45, 0.5);
 }

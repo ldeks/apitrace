@@ -58,7 +58,9 @@ ZoomBar::scrollStyleSheet =
     "}";
 
 
-ZoomBar::ZoomBar(QWidget *parent) : QWidget(parent) {
+ZoomBar::ZoomBar(QWidget *parent) : QWidget(parent),
+                                    zoom(1),
+                                    translation(0) {
   layout = new QHBoxLayout(this);
   layout->setSpacing(0);
   layout->setContentsMargins(0, 0, 0, 0);
@@ -71,6 +73,10 @@ ZoomBar::ZoomBar(QWidget *parent) : QWidget(parent) {
   connect(zoomInButton, &QToolButton::clicked,
           this, &ZoomBar::zoomIn);
   scroll = new QScrollBar(Qt::Horizontal, this);
+  scroll->setMaximum(0);
+  scroll->setMinimum(0);
+  scroll->setPageStep(scroll->width());
+  scroll->setValue(0);
   setStyleSheet(scrollStyleSheet);
   zoomOutButton = new QToolButton(this);
   zoomOutButton->setIcon(QIcon(":/images/zoom-out-symbolic.symbolic.png"));
@@ -85,4 +91,34 @@ ZoomBar::ZoomBar(QWidget *parent) : QWidget(parent) {
 }
 
 ZoomBar::~ZoomBar() {
+}
+
+void
+ZoomBar::positionHandle() {
+  int pageStep = scroll->width() / zoom;
+  float fullTranslation = 1 - zoom;
+  int maximum = scroll->width() - pageStep;
+  int value = 0;
+  if (fullTranslation != 0) {
+    value = translation * maximum / fullTranslation;
+  }
+
+  scroll->setPageStep(pageStep);
+  // You have to set the maximum, otherwise it doesn't work.
+  // You must also set maximum before value, otherwise value
+  // may get rejected as out of bounds.
+  scroll->setMaximum(maximum);
+  scroll->setValue(value);
+}
+
+void
+ZoomBar::setZoom(float value) {
+  zoom = value;
+  positionHandle();
+}
+
+void
+ZoomBar::setTranslation(float value) {
+  translation = value;
+  positionHandle();
 }
