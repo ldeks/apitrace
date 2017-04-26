@@ -88,6 +88,9 @@ ZoomBar::ZoomBar(QWidget *parent) : QWidget(parent),
   layout->addWidget(zoomOutButton);
   layout->addWidget(scroll);
   layout->addWidget(zoomInButton);
+
+  connect(scroll, &QScrollBar::valueChanged,
+          this, &ZoomBar::updateTranslation);
 }
 
 ZoomBar::~ZoomBar() {
@@ -121,4 +124,11 @@ void
 ZoomBar::setTranslation(float value) {
   translation = value;
   positionHandle();
+}
+
+void
+ZoomBar::updateTranslation(int value) {
+  float fullTranslation = 1 - zoom;
+  translation = fullTranslation * value / ((float) scroll->maximum());
+  emit translationChanged(translation);
 }
