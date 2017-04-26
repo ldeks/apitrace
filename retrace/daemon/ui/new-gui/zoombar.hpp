@@ -45,7 +45,6 @@ class ZoomBar : public QWidget {
  signals:
   void zoomIn();
   void zoomOut();
-  void valueChanged(int value);
 
  public slots:
   void positionHandle();
