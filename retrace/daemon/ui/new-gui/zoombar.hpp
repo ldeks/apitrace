@@ -45,11 +45,13 @@ class ZoomBar : public QWidget {
  signals:
   void zoomIn();
   void zoomOut();
+  void translationChanged(float value);
 
  public slots:
   void positionHandle();
   void setZoom(float value);
   void setTranslation(float value);
+  void updateTranslation(int value);
 
  protected:
   QHBoxLayout *layout;

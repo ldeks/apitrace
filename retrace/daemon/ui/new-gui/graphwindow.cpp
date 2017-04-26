@@ -158,3 +158,11 @@ GraphWindow::mouseDrag(float x1, float y1, float x2, float y2) {
   }
   update();
 }
+
+void
+GraphWindow::setTranslation(float value) {
+  translation = value;
+  if (renderer)
+    renderer->setZoom(zoom, translation);
+  update();
+}

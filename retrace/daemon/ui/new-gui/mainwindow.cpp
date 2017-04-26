@@ -157,6 +157,8 @@ MainWindow::connectSignals() {
           zoomBar, &ZoomBar::setTranslation);
   connect(graph, &GraphWindow::zoomChanged,
           zoomBar, &ZoomBar::setZoom);
+  connect(zoomBar, &ZoomBar::translationChanged,
+          graph, &GraphWindow::setTranslation);
 }
 
 void

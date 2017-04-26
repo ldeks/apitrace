@@ -64,6 +64,7 @@ class GraphWindow : public QOpenGLWindow,
   void setBars(QVector<BarMetrics> bars);
   void mouseWheel(int degrees, float zoom_point_x);
   void mouseDrag(float x1, float y1, float x2, float y2);
+  void setTranslation(float value);
 
   // QWindow functions
   void mousePressEvent(QMouseEvent *e);
