@@ -89,11 +89,6 @@ GraphWindow::paintGL() {
 
 void
 GraphWindow::resizeGL(int w, int h) {
-  if (renderer) {
-    // This should be a set zoom call?
-    // renderer->setMouseArea(0, 0, w, h);
-    update();
-  }
 }
 
 void
