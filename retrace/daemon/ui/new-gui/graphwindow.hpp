@@ -29,6 +29,7 @@
 #ifndef _GRAPHWINDOW_HPP_
 #define _GRAPHWINDOW_HPP_
 
+#include <QList>
 #include <QMouseEvent>
 #include <QOpenGLWindow>
 #include <QPointF>
@@ -38,6 +39,7 @@
 #include <vector>
 
 #include "glframe_bargraph.hpp"
+#include "glframe_qselection.hpp"
 
 namespace glretrace {
 
@@ -65,6 +67,7 @@ class GraphWindow : public QOpenGLWindow,
   void mouseWheel(int degrees, float zoom_point_x);
   void mouseDrag(float x1, float y1, float x2, float y2);
   void setTranslation(float value);
+  void setSelection(QList<int> sel);
 
   // QWindow functions
   void mousePressEvent(QMouseEvent *e);
@@ -78,6 +81,8 @@ class GraphWindow : public QOpenGLWindow,
  signals:
   void translationChanged(float value);
   void zoomChanged(float value);
+  void printMessage(QString msg);
+  void barSelect(QList<int> sel);
 
  protected:
   BarGraphRenderer *renderer;
@@ -87,6 +92,8 @@ class GraphWindow : public QOpenGLWindow,
                       // place [0..1.0] coordinate system
   bool clicked;
   bool shift;
+  QSelection selection;
+  std::vector<float> savedArea;
 };
 
 }  // namespace glretrace

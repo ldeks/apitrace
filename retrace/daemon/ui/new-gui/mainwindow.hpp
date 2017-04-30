@@ -76,6 +76,8 @@ class MainWindow : public QMainWindow {
   void zoomIn();
   void zoomOut();
 
+  void printMessage(QString msg);
+
  protected:
   // Ui objects
   QSplitter *splitter;
