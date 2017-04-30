@@ -159,6 +159,8 @@ MainWindow::connectSignals() {
           zoomBar, &ZoomBar::setZoom);
   connect(zoomBar, &ZoomBar::translationChanged,
           graph, &GraphWindow::setTranslation);
+  connect(graph, &GraphWindow::printMessage,
+          this, &MainWindow::printMessage);
 }
 
 void
@@ -274,4 +276,9 @@ void
 MainWindow::zoomOut() {
   statusBar()->showMessage("Zoom Out");
   graph->mouseWheel(-45, 0.5);
+}
+
+void
+MainWindow::printMessage(QString msg) {
+  statusBar()->showMessage(msg);
 }

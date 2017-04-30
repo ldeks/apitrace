@@ -27,7 +27,10 @@
 
 #include "graphwindow.hpp"
 
+#include <QVector>
+
 #include <algorithm>
+#include <set>
 
 using glretrace::BarGraphRenderer;
 using glretrace::GraphWindow;
@@ -39,8 +42,13 @@ GraphWindow::GraphWindow(UpdateBehavior updateBehavior,
                          zoom(1.0),
                          translation(0.0),
                          clicked(false),
-                         shift(false) {
+                         shift(false),
+                         savedArea(4) {
   startPos = QPointF(-1.0, -1.0);
+  connect(this, &GraphWindow::barSelect,
+          &selection, &QSelection::select);
+  connect(&selection, &QSelection::onSelect,
+          this, &GraphWindow::setSelection);
 }
 
 GraphWindow::~GraphWindow() {
@@ -56,51 +64,83 @@ GraphWindow::initializeGL() {
 
 void
 GraphWindow::paintGL() {
-  if (renderer)
+  if (renderer) {
+    renderer->setMouseArea(savedArea[0],
+                           savedArea[1],
+                           savedArea[2],
+                           savedArea[3]);
+
+    renderer->setZoom(zoom, translation);
+
+    if (clicked) {
+      renderer->selectMouseArea(shift);
+      renderer->setMouseArea(0, 0, 0, 0); // Act to clear?
+      savedArea[0] = -1.0;
+      savedArea[1] = -1.0;
+      savedArea[2] = -1.0;
+      savedArea[3] = -1.0;
+      clicked = false;
+      shift = false;
+    }
+
     renderer->render();
+  }
 }
 
 void
 GraphWindow::resizeGL(int w, int h) {
-  if (renderer)
-    renderer->setMouseArea(0, 0, w, h);
+  if (renderer) {
+    // This should be a set zoom call?
+    // renderer->setMouseArea(0, 0, w, h);
+    update();
+  }
 }
 
 void
 GraphWindow::setBars(QVector<BarMetrics> bars) {
-  if (renderer)
+  if (renderer) {
     renderer->setBars(bars.toStdVector());
+    update();
+  }
 }
 
 void
 GraphWindow::onBarSelect(const std::vector<int> selection) {
+  emit printMessage("bar select");
+  QVector<int> vec = QVector<int>::fromStdVector(selection);
+  emit barSelect(vec.toList());
 }
 
 void
 GraphWindow::mousePressEvent(QMouseEvent *e) {
+  emit printMessage("press");
   startPos = QPointF(e->pos());
   QPointF winSize = QPointF(width(), height());
   startPos.setX(startPos.x()/winSize.x());
   startPos.setY((winSize.y()-startPos.y())/winSize.y());
   mouseDrag(startPos.x(), startPos.y(),
             startPos.x(), startPos.y());
+  update();
 }
 
 void
 GraphWindow::mouseMoveEvent(QMouseEvent *e) {
   if (e->buttons() & Qt::LeftButton) {
-      QPointF endPos, mousePos, winSize;
-      winSize = QPointF(width(), height());
-      mousePos = QPointF(e->pos());
-      endPos.setX(mousePos.x()/winSize.x());
-      endPos.setY((winSize.y()-mousePos.y())/winSize.y());
-      mouseDrag(startPos.x(), startPos.y(),
-                endPos.x(), endPos.y());
+    emit printMessage("move");
+    QPointF endPos, mousePos, winSize;
+    winSize = QPointF(width(), height());
+    mousePos = QPointF(e->pos());
+    endPos.setX(mousePos.x()/winSize.x());
+    endPos.setY((winSize.y()-mousePos.y())/winSize.y());
+    mouseDrag(startPos.x(), startPos.y(),
+              endPos.x(), endPos.y());
+    update();
   }
 }
 
 void
 GraphWindow::mouseReleaseEvent(QMouseEvent *e) {
+  emit printMessage("release");
   clicked = true;
   shift = e->modifiers() & Qt::ShiftModifier;
   update();
@@ -108,9 +148,11 @@ GraphWindow::mouseReleaseEvent(QMouseEvent *e) {
 
 void
 GraphWindow::wheelEvent(QWheelEvent *e) {
+  emit printMessage("wheel");
   float wheelx = 1.0;
   wheelx = ((float) e->x())/((float) width());
   mouseWheel(((float) e->angleDelta().y())/5, wheelx);
+  update();
 }
 
 void
@@ -134,35 +176,29 @@ GraphWindow::mouseWheel(int degrees, float zoom_point_x) {
   zoom = new_zoom;
   emit zoomChanged(zoom);
 
-  if (renderer)
-    renderer->setZoom(zoom, translation);
   update();
 }
 
 void
 GraphWindow::mouseDrag(float x1, float y1, float x2, float y2) {
-  if (clicked) {
-    if (renderer) {
-      renderer->selectMouseArea(shift);
-      renderer->setMouseArea(0, 0, 0, 0);
-    }
-    clicked = false;
-    shift = false;
-  } else {
-    if (renderer) {
-      renderer->setMouseArea(std::min(x1, x2),
-                             std::min(y1, y2),
-                             std::max(x1, x2),
-                             std::max(y1, y2));
-    }
-  }
+  savedArea[0] = std::min(x1, x2);
+  savedArea[1] = std::min(y1, y2);
+  savedArea[2] = std::max(x1, x2);
+  savedArea[3] = std::max(y1, y2);
+
   update();
 }
 
 void
 GraphWindow::setTranslation(float value) {
   translation = value;
-  if (renderer)
-    renderer->setZoom(zoom, translation);
   update();
+}
+
+void
+GraphWindow::setSelection(QList<int> sel) {
+  std::set<int> s;
+  for (auto i : sel)
+    s.insert(i);
+  renderer->setSelection(s);
 }
