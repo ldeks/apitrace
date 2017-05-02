@@ -62,6 +62,7 @@ int main(int argc, char *argv[]) {
   UiModel model;
   mwindow.setModel(&model);
   mwindow.execDialog();
+  mwindow.errorMessage("Sample fatal", "I have to close", true);
 
   int ret = app.exec();
   Logger::Destroy();
