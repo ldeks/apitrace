@@ -176,6 +176,7 @@ void
 MainWindow::setModel(UiModel* mdl) {
   model = mdl;
   dialog->setModel(model);
+  shaderTab->setModel(model);
   connect(model, &UiModel::frameCountChanged,
           this, &MainWindow::updateProgress);
   connect(model, &UiModel::fileLoadFinished,

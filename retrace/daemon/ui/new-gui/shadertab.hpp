@@ -36,6 +36,8 @@
 #include <QTabWidget>
 #include <QWidget>
 
+#include "uimodel.hpp"
+
 namespace glretrace {
 
 class ShaderTab : public QWidget {
@@ -44,6 +46,12 @@ class ShaderTab : public QWidget {
   explicit ShaderTab(QWidget *parent = 0);
   virtual ~ShaderTab();
 
+  UiModel* getModel() { return model; }
+  void setModel(UiModel* mdl);
+
+ public slots:
+  void setRenders(QStringList r);
+
  protected:
   QHBoxLayout *layout;
   QStringList renders;
@@ -51,6 +59,9 @@ class ShaderTab : public QWidget {
   QListView *renderSelection;
   static const char *listStyleSheet;
   QTabWidget *tabs;
+
+  // Model
+  UiModel* model;
 };
 
 }  // namespace glretrace
