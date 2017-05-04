@@ -47,6 +47,7 @@
 #include "graphwindow.hpp"
 #include "uimodel.hpp"
 #include "glframe_bargraph.hpp"
+#include "shadertab.hpp"
 #include "zoombar.hpp"
 
 namespace glretrace {
@@ -100,6 +101,7 @@ class MainWindow : public QMainWindow {
   QLabel *filterLabel;
   QLineEdit *filter;
   QTabWidget *tabs;
+  ShaderTab *shaderTab;
   QProgressBar *pbar;
 
   // Model

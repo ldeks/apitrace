@@ -46,6 +46,7 @@ set (UI_HDRS
   ../glframe_qutil.hpp
   metricmodel.hpp
   zoombar.hpp
+  shadertab.hpp
 )
 
 set (UI_SRC
@@ -58,6 +59,7 @@ set (UI_SRC
   ../glframe_qutil.cpp
   metricmodel.cpp
   zoombar.cpp
+  shadertab.cpp
 )
 
 add_executable(fr-new-gui

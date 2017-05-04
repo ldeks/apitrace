@@ -112,7 +112,8 @@ MainWindow::MainWindow() {
   tabs = new QTabWidget(this);
   tabs->setSizePolicy(QSizePolicy::Expanding,
                       QSizePolicy::Expanding);
-  tabs->addTab(new QWidget(this), "Shaders");
+  shaderTab = new ShaderTab(this);
+  tabs->addTab(shaderTab, "Shaders");
   tabs->addTab(new QWidget(this), "RenderTarget");
   tabs->addTab(new QWidget(this), "API Calls");
   tabs->addTab(new QWidget(this), "Metrics");
