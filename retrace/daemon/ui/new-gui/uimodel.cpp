@@ -34,6 +34,8 @@
 #include <QtConcurrentRun>
 #include <QCoreApplication>
 #include <QFileInfo>
+#include <QString>
+#include <QStringList>
 
 #include "glframe_logger.hpp"
 #include "glframe_os.hpp"
@@ -46,6 +48,7 @@ using glretrace::MetricModel;
 using glretrace::OnFrameRetrace;
 using glretrace::QSelection;
 using glretrace::UiModel;
+using glretrace::RenderId;
 using glretrace::RenderSelection;
 using glretrace::SelectionId;
 using glretrace::ServerSocket;
@@ -166,6 +169,15 @@ UiModel::onFileOpening(bool needUpload,
   emit frameCountChanged(frame_count);
   if (finished) {
     emit fileLoadFinished();
+
+    // Grab the renders
+    int rcount = m_state->getRenderCount();
+    QStringList rStrings;
+    for (int i = 0; i < rcount; ++i) {
+      m_renders.append(RenderId(i));
+      rStrings << QString::number(i);
+    }
+    emit renderStrings(rStrings);
 
     // Make a request for a set of NULL (width = 1.0) data.
     std::vector<MetricId> ids;

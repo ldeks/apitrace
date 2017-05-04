@@ -44,6 +44,11 @@ ShaderTab::listStyleSheet =
     "  border: 0px transparent;\n"
     "}\n"
     "\n"
+    "QListView::item:selected:!active {\n"
+    "  background: LightSteelBlue;\n"
+    "  border: 0px transparent;\n"
+    "}\n"
+    "\n"
     "QListView::item:hover {\n"
     "  background: DarkGray;\n"
     "}";
@@ -53,8 +58,7 @@ ShaderTab::ShaderTab(QWidget *parent) : QWidget(parent) {
   setLayout(layout);
 
   // Renders list.
-  renders << "33" << "41" << "56";
-  rendersModel = new QStringListModel(renders, this);
+  rendersModel = new QStringListModel(this);
   renderSelection = new QListView(this);
   renderSelection->setModel(rendersModel);
   renderSelection->setStyleSheet(listStyleSheet);
@@ -73,4 +77,17 @@ ShaderTab::ShaderTab(QWidget *parent) : QWidget(parent) {
 }
 
 ShaderTab::~ShaderTab() {
+}
+
+void
+ShaderTab::setRenders(QStringList r) {
+  renders = r;
+  rendersModel->setStringList(renders);
+}
+
+void
+ShaderTab::setModel(UiModel* mdl) {
+  model = mdl;
+  connect(model, &UiModel::renderStrings,
+          this, &ShaderTab::setRenders);
 }

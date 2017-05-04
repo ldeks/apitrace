@@ -95,6 +95,7 @@ class UiModel : public QObject,
   // QVector is implicitly shared, so no deep copy occurs.
   void graphDataReceived(QString name, QVector<float> data);
   void generalError(QString text, QString details, bool fatal);
+  void renderStrings(QStringList renders);
 
  private:
   FrameRetraceStub m_retrace;
@@ -104,6 +105,7 @@ class UiModel : public QObject,
   QList<int> m_cached_selection;
   int m_target_frame_number;
   MetricModel *m_metric_model;
+  QList<RenderId> m_renders;
 };
 
 }  // namespace glretrace
