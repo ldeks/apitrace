@@ -14,7 +14,7 @@
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANEDITILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
@@ -26,51 +26,46 @@
  **************************************************************************/
 
 
-#ifndef _SHADERTAB_HPP_
-#define _SHADERTAB_HPP_
+#ifndef _SHADERDISPLAY_HPP_
+#define _SHADERDISPLAY_HPP_
 
 #include <QHBoxLayout>
-#include <QListView>
-#include <QStringList>
-#include <QStringListModel>
+#include <QPushButton>
 #include <QTabWidget>
 #include <QTextEdit>
+#include <QVBoxLayout>
 #include <QWidget>
-
-#include "uimodel.hpp"
-#include "shaderedit.hpp"
 
 namespace glretrace {
 
-class ShaderTab : public QWidget {
+class ShaderDisplay : public QTabWidget {
   Q_OBJECT
  public:
-  explicit ShaderTab(QWidget *parent = 0);
-  virtual ~ShaderTab();
+  explicit ShaderDisplay(QWidget *parent = 0);
+  virtual ~ShaderDisplay();
 
-  UiModel* getModel() { return model; }
-  void setModel(UiModel* mdl);
-
- public slots:
-  void setRenders(QStringList r);
+ private:
+  void initTab(QTextEdit *tab, QString name);
 
  protected:
-  QHBoxLayout *layout;
-  QStringList renders;
-  QStringListModel *rendersModel;
-  QListView *renderSelection;
-  static const char *listStyleSheet;
-  QTabWidget *tabs;
-  ShaderEdit *vertex;
-  ShaderEdit *fragment;
-  ShaderEdit *tesselation;
-  ShaderEdit *geometry;
-  ShaderEdit *compute;
+  // Source tab.
+  QWidget *source;
+  QVBoxLayout *sourceLayout;
+  static const char *sourceStyleSheet;
+  QTextEdit *sourceText;
+  QWidget *compileArea;
+  QHBoxLayout *compileLayout;
+  QPushButton *compileButton;
+  QWidget *compileSpacer;
 
-  // Model
-  UiModel* model;
+  // Other tabs.
+  static const char *styleSheet;
+  QTextEdit *ir;
+  QTextEdit *ssa;
+  QTextEdit *nir;
+  QTextEdit *simd8;
 };
 
 }  // namespace glretrace
 
-#endif  // _SHADERTAB_HPP_
+#endif  // _SHADERDISPLAY_HPP_

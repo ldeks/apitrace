@@ -68,11 +68,16 @@ ShaderTab::ShaderTab(QWidget *parent) : QWidget(parent) {
 
   // Tabs
   tabs = new QTabWidget(this);
-  tabs->addTab(new QWidget(this), "Vertex");
-  tabs->addTab(new QWidget(this), "Fragment");
-  tabs->addTab(new QWidget(this), "Tesselation");
-  tabs->addTab(new QWidget(this), "Geometry");
-  tabs->addTab(new QWidget(this), "Compute");
+  vertex = new ShaderEdit(this);
+  tabs->addTab(vertex, "Vertex");
+  fragment = new ShaderEdit(this);
+  tabs->addTab(fragment, "Fragment");
+  tesselation = new ShaderEdit(this);
+  tabs->addTab(tesselation, "Tesselation");
+  geometry = new ShaderEdit(this);
+  tabs->addTab(geometry, "Geometry");
+  compute = new ShaderEdit(this);
+  tabs->addTab(compute, "Compute");
   layout->addWidget(tabs);
 }
 
