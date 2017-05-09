@@ -56,7 +56,8 @@ using glretrace::ServerSocket;
 UiModel::UiModel() : m_state(NULL),
                      m_selection(NULL),
                      m_selection_count(0),
-                     m_metric_model(NULL) {
+                     m_metric_model(NULL),
+                     m_shader_model(NULL) {
 }
 
 UiModel::~UiModel() {
@@ -67,6 +68,10 @@ UiModel::~UiModel() {
   if (m_metric_model) {
     delete m_metric_model;
     m_metric_model = NULL;
+  }
+  if (m_shader_model) {
+    delete m_shader_model;
+    m_shader_model = NULL;
   }
   m_retrace.Shutdown();
 }
@@ -176,13 +181,10 @@ UiModel::onFileOpening(bool needUpload,
     emit fileLoadFinished();
 
     // Grab the renders
-    int rcount = m_state->getRenderCount();
-    QStringList rStrings;
-    for (int i = 0; i < rcount; ++i) {
-      m_renders.append(RenderId(i));
-      rStrings << QString::number(i);
-    }
-    emit renderStrings(rStrings);
+    if (m_shader_model)
+      delete m_shader_model;
+    m_shader_model = new ShaderModel(m_state->getRenderCount());
+    emit renderStrings(m_shader_model->getRenderStrings());
 
     // Make a request for a set of NULL (width = 1.0) data.
     std::vector<MetricId> ids;

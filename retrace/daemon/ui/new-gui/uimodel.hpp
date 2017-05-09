@@ -38,6 +38,7 @@
 #include "glframe_retrace_interface.hpp"
 #include "glframe_retrace_stub.hpp"
 #include "metricmodel.hpp"
+#include "shadermodel.hpp"
 
 namespace glretrace {
 
@@ -105,7 +106,7 @@ class UiModel : public QObject,
   QList<int> m_cached_selection;
   int m_target_frame_number;
   MetricModel *m_metric_model;
-  QList<RenderId> m_renders;
+  ShaderModel *m_shader_model;
 };
 
 }  // namespace glretrace
