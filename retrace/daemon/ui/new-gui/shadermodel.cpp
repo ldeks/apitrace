@@ -35,8 +35,29 @@ ShaderModel::ShaderModel(int count) {
   for (int i = 0; i < count; ++i) {
     renders.append(RenderId(i));
     renderStrings << QString::number(i);
+    renderData.append(new RenderShaders());
   }
 }
 
 ShaderModel::~ShaderModel() {
+  for (int i = 0; i < renderData.length(); i++) {
+    delete renderData[i];
+  }
+}
+
+void
+ShaderModel::setAssembly(RenderId renderId,
+                         SelectionId selectionCount,
+                         const ShaderAssembly &vertex,
+                         const ShaderAssembly &fragment,
+                         const ShaderAssembly &tess_control,
+                         const ShaderAssembly &tess_eval,
+                         const ShaderAssembly &geom,
+                         const ShaderAssembly &comp) {
+  renderData[renderId()]->addShader(vertex);
+  renderData[renderId()]->addShader(fragment);
+  renderData[renderId()]->addShader(tess_control);
+  renderData[renderId()]->addShader(tess_eval);
+  renderData[renderId()]->addShader(geom);
+  renderData[renderId()]->addShader(comp);
 }

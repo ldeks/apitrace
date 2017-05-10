@@ -26,41 +26,37 @@
  **************************************************************************/
 
 
-#ifndef _SHADERMODEL_HPP_
-#define _SHADERMODEL_HPP_
+#ifndef _RENDERSHADERS_HPP_
+#define _RENDERSHADERS_HPP_
 
+#include <QHash>
 #include <QObject>
-#include <QStringList>
-#include <QVector>
+#include <QString>
+
+#include <string>
 
 #include "glframe_retrace_interface.hpp"
-#include "rendershaders.hpp"
 
 namespace glretrace {
 
-class ShaderModel : public QObject {
+class RenderShaders : public QObject {
   Q_OBJECT
 
  public:
-  ShaderModel(int count);
-  ~ShaderModel();
+  RenderShaders();
+  ~RenderShaders();
 
-  QStringList getRenderStrings() { return renderStrings; }
-  void setAssembly(RenderId renderId,
-                   SelectionId selectionCount,
-                   const ShaderAssembly &vertex,
-                   const ShaderAssembly &fragment,
-                   const ShaderAssembly &tess_control,
-                   const ShaderAssembly &tess_eval,
-                   const ShaderAssembly &geom,
-                   const ShaderAssembly &comp);
+  void addShader(ShaderAssembly s);
+  QString getShaderText(QString shaderType, QString asmType);
+  void setShaderText(QString shaderType, QString asmType, QString text);
+
+  static std::string *getAssemblyMember(ShaderAssembly *s,
+                                        QString asmType);
 
  protected:
-  QStringList renderStrings;
-  QVector<RenderId> renders;
-  QVector<RenderShaders*> renderData;
+  QHash<QString, ShaderAssembly> shaders;
 };
 
 }  // namespace glretrace
 
-#endif  // _SHADERMODEL_HPP_
+#endif  // _RENDERSHADERS_HPP_

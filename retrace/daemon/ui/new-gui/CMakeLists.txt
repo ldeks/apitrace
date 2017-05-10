@@ -49,6 +49,7 @@ set (UI_HDRS
   shadertab.hpp
   shaderedit.hpp
   shadermodel.hpp
+  rendershaders.hpp
 )
 
 set (UI_SRC
@@ -64,6 +65,7 @@ set (UI_SRC
   shadertab.cpp
   shaderedit.cpp
   shadermodel.cpp
+  rendershaders.cpp
 )
 
 add_executable(fr-new-gui

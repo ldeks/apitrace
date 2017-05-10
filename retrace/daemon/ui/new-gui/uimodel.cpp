@@ -202,6 +202,12 @@ UiModel::onShaderAssembly(RenderId renderId,
                           const ShaderAssembly &tess_eval,
                           const ShaderAssembly &geom,
                           const ShaderAssembly &comp) {
+  if (!m_shader_model)
+    return;
+
+  m_shader_model->setAssembly(renderId, selectionCount, vertex,
+                              fragment, tess_control, tess_eval,
+                              geom, comp);
 }
 
 void
