@@ -55,7 +55,6 @@ ShaderEdit::ShaderEdit(QWidget *parent) : QTabWidget(parent) {
   sourceLayout->setSpacing(0);
   sourceText = new QTextEdit(source);
   sourceText->setFontFamily("monospace");
-  sourceText->setText("#include <QSizePolicy>\n\n#include <QSizePolicy2>");
   sourceText->setStyleSheet(sourceStyleSheet);
   sourceLayout->addWidget(sourceText);
 
@@ -91,4 +90,18 @@ ShaderEdit::initTab(QTextEdit *tab, QString name) {
   tab = new QTextEdit(this);
   tab->setStyleSheet(styleSheet);
   addTab(tab, name);
+}
+
+void
+ShaderEdit::setText(QString tabname, QString text) {
+  if (tabname == "source")
+    sourceText->setText(text);
+  else if (tabname == "ir")
+    ir->setText(text);
+  else if (tabname == "ssa")
+    ssa->setText(text);
+  else if (tabname == "nir")
+    nir->setText(text);
+  else if (tabname == "simd8")
+    simd8->setText(text);
 }

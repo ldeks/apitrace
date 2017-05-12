@@ -44,6 +44,8 @@ class ShaderEdit : public QTabWidget {
   explicit ShaderEdit(QWidget *parent = 0);
   virtual ~ShaderEdit();
 
+  void setText(QString tabname, QString text);
+
  private:
   void initTab(QTextEdit *tab, QString name);
 

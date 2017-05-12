@@ -55,6 +55,12 @@ class ShaderModel : public QObject {
                    const ShaderAssembly &geom,
                    const ShaderAssembly &comp);
 
+ signals:
+  void shaderTextObject(RenderShaders *rs);
+
+ public slots:
+  void getShaderText(int renderIndex);
+
  protected:
   QStringList renderStrings;
   QVector<RenderId> renders;

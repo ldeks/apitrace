@@ -151,6 +151,7 @@ UiModel::setFrame(const QString &filename, int framenumber,
                                      m_cached_selection,
                                      &sel);
   m_retrace.retraceApi(sel, this);
+  m_retrace.retraceShaderAssembly(sel, this);
   return true;
 }
 
@@ -184,6 +185,11 @@ UiModel::onFileOpening(bool needUpload,
     if (m_shader_model)
       delete m_shader_model;
     m_shader_model = new ShaderModel(m_state->getRenderCount());
+    connect(this, &UiModel::needShaderText,
+            m_shader_model, &ShaderModel::getShaderText);
+    connect(m_shader_model, &ShaderModel::shaderTextObject,
+            this, &UiModel::shaderTextObject);
+    emit printMessage("There is a shader model now.");
     emit renderStrings(m_shader_model->getRenderStrings());
 
     // Make a request for a set of NULL (width = 1.0) data.

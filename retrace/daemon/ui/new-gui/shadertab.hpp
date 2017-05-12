@@ -39,6 +39,7 @@
 
 #include "uimodel.hpp"
 #include "shaderedit.hpp"
+#include "rendershaders.hpp"
 
 namespace glretrace {
 
@@ -53,6 +54,12 @@ class ShaderTab : public QWidget {
 
  public slots:
   void setRenders(QStringList r);
+  void convertActivation(const QModelIndex &index);
+  void populateTabs(RenderShaders *rs);
+
+ signals:
+  void shaderActivated(int index);
+  void printMessage(QString msg);
 
  protected:
   QHBoxLayout *layout;
@@ -69,6 +76,11 @@ class ShaderTab : public QWidget {
 
   // Model
   UiModel* model;
+ 
+ private:
+  void makeConnections();
+  void populateEdit(RenderShaders *rs, ShaderEdit *edit,
+                    QString shaderType);
 };
 
 }  // namespace glretrace

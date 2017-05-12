@@ -79,6 +79,14 @@ ShaderTab::ShaderTab(QWidget *parent) : QWidget(parent) {
   compute = new ShaderEdit(this);
   tabs->addTab(compute, "Compute");
   layout->addWidget(tabs);
+
+  makeConnections();
+}
+
+void
+ShaderTab::makeConnections() {
+  connect(renderSelection, &QListView::clicked,
+          this, &ShaderTab::convertActivation);
 }
 
 ShaderTab::~ShaderTab() {
@@ -93,6 +101,39 @@ ShaderTab::setRenders(QStringList r) {
 void
 ShaderTab::setModel(UiModel* mdl) {
   model = mdl;
+
   connect(model, &UiModel::renderStrings,
           this, &ShaderTab::setRenders);
+  connect(this, &ShaderTab::shaderActivated,
+          model, &UiModel::needShaderText);
+  connect(model, &UiModel::shaderTextObject,
+          this, &ShaderTab::populateTabs);
+}
+
+void
+ShaderTab::convertActivation(const QModelIndex &index) {
+  QVariant varIndex = rendersModel->data(index, Qt::DisplayRole);
+  QString stringIndex = varIndex.toString();
+  int intIndex = stringIndex.toInt();
+  emit printMessage("activated");
+  emit shaderActivated(intIndex);
+}
+
+void
+ShaderTab::populateTabs(RenderShaders *rs) {
+  populateEdit(rs, vertex, "vertex");
+  populateEdit(rs, fragment, "fragment");
+  populateEdit(rs, tesselation, "tesselation");
+  populateEdit(rs, geometry, "geometry");
+  populateEdit(rs, compute, "compute");
+}
+
+void
+ShaderTab::populateEdit(RenderShaders *rs, ShaderEdit *edit,
+                        QString shaderType) {
+  edit->setText("source", rs->getShaderText(shaderType, "source"));
+  edit->setText("ir", rs->getShaderText(shaderType, "ir"));
+  edit->setText("ssa", rs->getShaderText(shaderType, "ssa"));
+  edit->setText("nir", rs->getShaderText(shaderType, "nir"));
+  edit->setText("simd8", rs->getShaderText(shaderType, "simd8"));
 }

@@ -61,3 +61,8 @@ ShaderModel::setAssembly(RenderId renderId,
   renderData[renderId()]->addShader(geom);
   renderData[renderId()]->addShader(comp);
 }
+
+void
+ShaderModel::getShaderText(int renderIndex) {
+  emit shaderTextObject(renderData[renderIndex]);
+}

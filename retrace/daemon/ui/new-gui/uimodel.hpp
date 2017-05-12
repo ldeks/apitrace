@@ -39,6 +39,7 @@
 #include "glframe_retrace_stub.hpp"
 #include "metricmodel.hpp"
 #include "shadermodel.hpp"
+#include "rendershaders.hpp"
 
 namespace glretrace {
 
@@ -97,6 +98,9 @@ class UiModel : public QObject,
   void graphDataReceived(QString name, QVector<float> data);
   void generalError(QString text, QString details, bool fatal);
   void renderStrings(QStringList renders);
+  void needShaderText(int renderIndex);
+  void shaderTextObject(RenderShaders *rs);
+  void printMessage(QString msg);
 
  private:
   FrameRetraceStub m_retrace;
