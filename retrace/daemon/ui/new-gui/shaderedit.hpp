@@ -47,7 +47,7 @@ class ShaderEdit : public QTabWidget {
   void setText(QString tabname, QString text);
 
  private:
-  void initTab(QTextEdit *tab, QString name);
+  QTextEdit* initTab(QString name);
 
  protected:
   // Source tab.

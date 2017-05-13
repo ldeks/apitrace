@@ -151,7 +151,6 @@ UiModel::setFrame(const QString &filename, int framenumber,
                                      m_cached_selection,
                                      &sel);
   m_retrace.retraceApi(sel, this);
-  m_retrace.retraceShaderAssembly(sel, this);
   return true;
 }
 
@@ -186,11 +185,16 @@ UiModel::onFileOpening(bool needUpload,
       delete m_shader_model;
     m_shader_model = new ShaderModel(m_state->getRenderCount());
     connect(this, &UiModel::needShaderText,
-            m_shader_model, &ShaderModel::getShaderText);
+            this, &UiModel::getShaderText);
     connect(m_shader_model, &ShaderModel::shaderTextObject,
             this, &UiModel::shaderTextObject);
-    emit printMessage("There is a shader model now.");
     emit renderStrings(m_shader_model->getRenderStrings());
+    // Ask for all of the shader state, so we can cache it.
+    RenderSelection all;
+    all.id = m_selection_count;
+    ++m_selection_count;
+    all.push_back(0, m_state->getRenderCount()-1);
+    m_retrace.retraceShaderAssembly(all, this);
 
     // Make a request for a set of NULL (width = 1.0) data.
     std::vector<MetricId> ids;
@@ -273,4 +277,13 @@ UiModel::onError(ErrorSeverity s, const std::string &message) {
     general_error_details = m_l[1];
   bool fatal = (s == RETRACE_FATAL);
   emit generalError(general_error, general_error_details, fatal);
+}
+
+void
+UiModel::getShaderText(int renderIndex) {
+  QString msg = "here ";
+  msg.append(QString::number(renderIndex));
+  emit printMessage(msg);
+  if (m_shader_model)
+    m_shader_model->getShaderText(renderIndex);
 }

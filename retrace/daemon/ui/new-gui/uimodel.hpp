@@ -102,6 +102,9 @@ class UiModel : public QObject,
   void shaderTextObject(RenderShaders *rs);
   void printMessage(QString msg);
 
+ public slots:
+  void getShaderText(int renderIndex);
+
  private:
   FrameRetraceStub m_retrace;
   FrameState *m_state;

@@ -76,32 +76,34 @@ ShaderEdit::ShaderEdit(QWidget *parent) : QTabWidget(parent) {
 
 
   //Other tabs.
-  initTab(ir, "IR");
-  initTab(ssa, "SSA");
-  initTab(nir, "NIR");
-  initTab(simd8, "Simd8");
+  ir = initTab("IR");
+  ssa = initTab("SSA");
+  nir = initTab("NIR");
+  simd8 = initTab("Simd8");
 }
 
 ShaderEdit::~ShaderEdit() {
 }
 
-void
-ShaderEdit::initTab(QTextEdit *tab, QString name) {
-  tab = new QTextEdit(this);
+QTextEdit*
+ShaderEdit::initTab(QString name) {
+  QTextEdit *tab = new QTextEdit(this);
   tab->setStyleSheet(styleSheet);
+  tab->setFontFamily("monospace");
   addTab(tab, name);
+  return tab;
 }
 
 void
 ShaderEdit::setText(QString tabname, QString text) {
   if (tabname == "source")
-    sourceText->setText(text);
+    sourceText->setPlainText(text);
   else if (tabname == "ir")
-    ir->setText(text);
+    ir->setPlainText(text);
   else if (tabname == "ssa")
-    ssa->setText(text);
+    ssa->setPlainText(text);
   else if (tabname == "nir")
-    nir->setText(text);
+    nir->setPlainText(text);
   else if (tabname == "simd8")
-    simd8->setText(text);
+    simd8->setPlainText(text);
 }

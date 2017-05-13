@@ -36,9 +36,9 @@ RenderShaders::~RenderShaders() {
 }
 
 void
-RenderShaders::addShader(ShaderAssembly s) {
+RenderShaders::addShader(QString shaderType, ShaderAssembly s) {
   // If key already exists, this will replace that entry.
-  shaders[QString::fromStdString(s.shader)] = s;
+  shaders[shaderType] = s;
 }
 
 QString
@@ -54,8 +54,10 @@ RenderShaders::getShaderText(QString shaderType, QString asmType) {
   std::string* sptr = getAssemblyMember(&shaders[shaderType],
                                         asmType);
 
-  if (sptr)
-    return QString::fromStdString(*sptr);
+  if (sptr) {
+    // Need deep copy?
+    return QString(QString::fromStdString(*sptr));
+  }
   else
     return QString();
 }
@@ -83,7 +85,9 @@ RenderShaders::setShaderText(QString shaderType, QString asmType,
 std::string *
 RenderShaders::getAssemblyMember(ShaderAssembly *s,
                                  QString asmType) {
-  if (asmType == "ir")
+  if (asmType == "shader")
+    return &s->shader;
+  else if (asmType == "ir")
     return &s->ir;
   else if (asmType == "ssa")
     return &s->ssa;

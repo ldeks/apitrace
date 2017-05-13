@@ -115,7 +115,9 @@ ShaderTab::convertActivation(const QModelIndex &index) {
   QVariant varIndex = rendersModel->data(index, Qt::DisplayRole);
   QString stringIndex = varIndex.toString();
   int intIndex = stringIndex.toInt();
-  emit printMessage("activated");
+  QString msg = "activated ";
+  msg.append(stringIndex);
+  emit printMessage(msg);
   emit shaderActivated(intIndex);
 }
 
@@ -131,7 +133,7 @@ ShaderTab::populateTabs(RenderShaders *rs) {
 void
 ShaderTab::populateEdit(RenderShaders *rs, ShaderEdit *edit,
                         QString shaderType) {
-  edit->setText("source", rs->getShaderText(shaderType, "source"));
+  edit->setText("source", rs->getShaderText(shaderType, "shader"));
   edit->setText("ir", rs->getShaderText(shaderType, "ir"));
   edit->setText("ssa", rs->getShaderText(shaderType, "ssa"));
   edit->setText("nir", rs->getShaderText(shaderType, "nir"));

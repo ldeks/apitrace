@@ -46,7 +46,7 @@ class RenderShaders : public QObject {
   RenderShaders();
   ~RenderShaders();
 
-  void addShader(ShaderAssembly s);
+  void addShader(QString shaderType, ShaderAssembly s);
   QString getShaderText(QString shaderType, QString asmType);
   void setShaderText(QString shaderType, QString asmType, QString text);
 

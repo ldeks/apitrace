@@ -54,12 +54,12 @@ ShaderModel::setAssembly(RenderId renderId,
                          const ShaderAssembly &tess_eval,
                          const ShaderAssembly &geom,
                          const ShaderAssembly &comp) {
-  renderData[renderId()]->addShader(vertex);
-  renderData[renderId()]->addShader(fragment);
-  renderData[renderId()]->addShader(tess_control);
-  renderData[renderId()]->addShader(tess_eval);
-  renderData[renderId()]->addShader(geom);
-  renderData[renderId()]->addShader(comp);
+  renderData[renderId.index()]->addShader("vertex", vertex);
+  renderData[renderId.index()]->addShader("fragment", fragment);
+  renderData[renderId.index()]->addShader("tesselation", tess_control);
+  // renderData[renderId.index()]->addShader(tess_eval);
+  renderData[renderId.index()]->addShader("geometry", geom);
+  renderData[renderId.index()]->addShader("compute", comp);
 }
 
 void
