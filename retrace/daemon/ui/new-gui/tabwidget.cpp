@@ -29,7 +29,9 @@
 
 using glretrace::TabWidget;
 
-TabWidget::TabWidget(QWidget *parent) : QWidget(parent) {
+TabWidget::TabWidget(QWidget *parent) : QTabWidget(parent) {
+  mask.resize(10);
+  tabCount = 0;
 }
 
 TabWidget::~TabWidget() {
@@ -39,35 +41,28 @@ int
 TabWidget::addTab(QWidget *page, const QString &label) {
   // Check to see if this widget is already in here.
   // If it's in there, it's unhidden.
-  idx = QTabWidget::indexOf(page);
+  int idx = QTabWidget::indexOf(page);
   if (idx != -1)
     return idx;
 
   // Add the widget
   idx = QTabWidget::addTab(page, label);
-  indices.append(idx);
   tabs.append(page);
   names.append(label);
+  mask.setBit(tabCount, true);
+  tabCount++;
+
+  // Resize the mask, if necessary.
+  if (tabCount >= mask.size()) {
+    mask.resize(2 * mask.size());
+  }
 
   return idx;
 }
 
 void
-TabWidget::hideTab(QWidget *tab) {
-  if (isHidden(tab))
-    return;
-
-  // nidx - "native index" as opposed to index according to QTabWidget
-  int nidx = tabs.indexOf(tab);
-  if (nidx == -1)
-    return;
-
-  QTabWidget::removeTab(indices[nidx]);
-}
-
-void
-TabWidget::showTab(QWidget *tab) {
-  if (!isHidden(tab))
+TabWidget::setTabVisible(QWidget *tab, bool visible) {
+  if (visible == isTabVisible(tab))
     return;
 
   // nidx - "native index" - native to this inherited class
@@ -75,16 +70,21 @@ TabWidget::showTab(QWidget *tab) {
   if (nidx == -1)
     return;
 
-  // idx - index according to QTabWidget
-  int idx = QTabWidget::insertTab(indices[nidx], page,
-                                  names.at(nidx));
-  indices[nidx] = idx;
+  // Clear and re-add tabs (to preserve tab order)
+  mask.setBit(nidx, visible);
+  QTabWidget::clear();
+  for (int i = 0; i < tabs.size(); i++) {
+    if (mask.testBit(i)) {
+      QTabWidget::addTab(tabs.at(i), names.at(i));
+    }
+  }
 }
 
 bool
-TabWidget::isHidden(QWidget *tab) {
-  if (-1 == QTabWidget::indexOf(tab))
-    return true;
-  else
+TabWidget::isTabVisible(QWidget *tab) {
+  int nidx = tabs.indexOf(tab);
+  if (nidx == -1)
     return false;
+
+  return mask.testBit(nidx);
 }

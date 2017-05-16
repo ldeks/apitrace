@@ -50,6 +50,7 @@ set (UI_HDRS
   shaderedit.hpp
   shadermodel.hpp
   rendershaders.hpp
+  tabwidget.hpp
 )
 
 set (UI_SRC
@@ -66,6 +67,7 @@ set (UI_SRC
   shaderedit.cpp
   shadermodel.cpp
   rendershaders.cpp
+  tabwidget.cpp
 )
 
 add_executable(fr-new-gui

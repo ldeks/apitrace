@@ -44,14 +44,14 @@ class TabWidget : public QTabWidget {
   virtual ~TabWidget();
 
   int addTab(QWidget *page, const QString &label);
-  void hideTab(QWidget *tab);
-  void showTab(QWidget *tab);
-  bool isHidden(QWidget *tab);
+  void setTabVisible(QWidget *tab, bool visible);
+  bool isTabVisible(QWidget *tab);
 
  protected:
-  QVector<int> indices;
   QVector<QWidget *> tabs;
   QStringList names;
+  QBitArray mask;
+  int tabCount;
 };
 
 }  // namespace glretrace
