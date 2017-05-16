@@ -30,8 +30,6 @@
 using glretrace::TabWidget;
 
 TabWidget::TabWidget(QWidget *parent) : QWidget(parent) {
-  mask.resize(10);
-  tabCount = 0;
 }
 
 TabWidget::~TabWidget() {
@@ -50,35 +48,37 @@ TabWidget::addTab(QWidget *page, const QString &label) {
   indices.append(idx);
   tabs.append(page);
   names.append(label);
-  mask.setBit(tabCount, true);
-  tabCount++;
-
-  // Resize the mask if necessary. More than 10 tabs is unlikely.
-  if (tabCount >= mask.size()) {
-    mask.resize(2 * mask.size());
-  }
 
   return idx;
 }
 
 void
 TabWidget::hideTab(QWidget *tab) {
-  int idx = tabs.indexOf(tab);
-  if (idx == -1)
+  if (isHidden(tab))
     return;
 
-  mask.setBit(idx, false);
-  QTabWidget::removeTab(indices[idx]);
+  // nidx - "native index" as opposed to index according to QTabWidget
+  int nidx = tabs.indexOf(tab);
+  if (nidx == -1)
+    return;
+
+  QTabWidget::removeTab(indices[nidx]);
 }
 
 void
 TabWidget::showTab(QWidget *tab) {
-  int idx = tabs.indexOf(tab);
-  if (idx == -1)
+  if (!isHidden(tab))
     return;
 
-  mask.setBit(idx, true);
-  QTabWidget::insertTab(indices[idx], page, names.at(idx));
+  // nidx - "native index" - native to this inherited class
+  int nidx = tabs.indexOf(tab);
+  if (nidx == -1)
+    return;
+
+  // idx - index according to QTabWidget
+  int idx = QTabWidget::insertTab(indices[nidx], page,
+                                  names.at(nidx));
+  indices[nidx] = idx;
 }
 
 bool
