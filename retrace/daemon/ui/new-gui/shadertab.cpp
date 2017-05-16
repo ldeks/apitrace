@@ -72,8 +72,12 @@ ShaderTab::ShaderTab(QWidget *parent) : QWidget(parent) {
   tabs->addTab(vertex, "Vertex");
   fragment = new ShaderEdit(this);
   tabs->addTab(fragment, "Fragment");
-  tesselation = new ShaderEdit(this);
+  tesselation = new QTabWidget(this);
   tabs->addTab(tesselation, "Tesselation");
+  tessControl = new ShaderEdit(this);
+  tesselation->addTab(tessControl, "Control");
+  tessEval = new ShaderEdit(this);
+  tesselation->addTab(tessEval, "Evaluation");
   geometry = new ShaderEdit(this);
   tabs->addTab(geometry, "Geometry");
   compute = new ShaderEdit(this);
@@ -125,7 +129,8 @@ void
 ShaderTab::populateTabs(RenderShaders *rs) {
   populateEdit(rs, vertex, "vertex");
   populateEdit(rs, fragment, "fragment");
-  populateEdit(rs, tesselation, "tesselation");
+  populateEdit(rs, tessControl, "tess_control");
+  populateEdit(rs, tessEval, "tess_eval");
   populateEdit(rs, geometry, "geometry");
   populateEdit(rs, compute, "compute");
 }

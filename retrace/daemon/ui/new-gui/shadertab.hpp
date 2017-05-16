@@ -70,7 +70,9 @@ class ShaderTab : public QWidget {
   QTabWidget *tabs;
   ShaderEdit *vertex;
   ShaderEdit *fragment;
-  ShaderEdit *tesselation;
+  QTabWidget *tesselation;
+  ShaderEdit *tessControl;
+  ShaderEdit *tessEval;
   ShaderEdit *geometry;
   ShaderEdit *compute;
 
