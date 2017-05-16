@@ -56,8 +56,8 @@ ShaderModel::setAssembly(RenderId renderId,
                          const ShaderAssembly &comp) {
   renderData[renderId.index()]->addShader("vertex", vertex);
   renderData[renderId.index()]->addShader("fragment", fragment);
-  renderData[renderId.index()]->addShader("tesselation", tess_control);
-  // renderData[renderId.index()]->addShader(tess_eval);
+  renderData[renderId.index()]->addShader("tess_control", tess_control);
+  renderData[renderId.index()]->addShader("tess_eval", tess_eval);
   renderData[renderId.index()]->addShader("geometry", geom);
   renderData[renderId.index()]->addShader("compute", comp);
 }
