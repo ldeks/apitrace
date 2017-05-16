@@ -39,7 +39,6 @@
 #include <QStringList>
 #include <QStringListModel>
 #include <QSortFilterProxyModel>
-#include <QTabWidget>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -49,6 +48,7 @@
 #include "glframe_bargraph.hpp"
 #include "shadertab.hpp"
 #include "zoombar.hpp"
+#include "tabwidget.hpp"
 
 namespace glretrace {
 
@@ -100,7 +100,7 @@ class MainWindow : public QMainWindow {
   QComboBox *xComboBox;
   QLabel *filterLabel;
   QLineEdit *filter;
-  QTabWidget *tabs;
+  TabWidget *tabs;
   ShaderTab *shaderTab;
   QProgressBar *pbar;
 

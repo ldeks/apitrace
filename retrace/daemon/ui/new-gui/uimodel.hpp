@@ -101,6 +101,7 @@ class UiModel : public QObject,
   void needShaderText(int renderIndex);
   void shaderTextObject(RenderShaders *rs);
   void printMessage(QString msg);
+  void hasShaders();
 
  public slots:
   void getShaderText(int renderIndex);

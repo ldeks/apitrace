@@ -38,6 +38,7 @@
 using glretrace::GraphWindow;
 using glretrace::MainWindow;
 using glretrace::OpenDialog;
+using glretrace::TabWidget;
 using glretrace::UiModel;
 
 // From Qt style sheets examples "Customizing QSplitter"
@@ -109,11 +110,13 @@ MainWindow::MainWindow() {
   splitter->addWidget(graphArea);
 
   // Tab Widget
-  tabs = new QTabWidget(this);
+  tabs = new TabWidget(this);
   tabs->setSizePolicy(QSizePolicy::Expanding,
                       QSizePolicy::Expanding);
   shaderTab = new ShaderTab(this);
   tabs->addTab(shaderTab, "Shaders");
+  // Hide Shaders tab until Shaders data exists.
+  tabs->setTabVisible(shaderTab, false);
   tabs->addTab(new QWidget(this), "RenderTarget");
   tabs->addTab(new QWidget(this), "API Calls");
   tabs->addTab(new QWidget(this), "Metrics");
@@ -191,6 +194,8 @@ MainWindow::setModel(UiModel* mdl) {
           this, &MainWindow::errorMessage);
   connect(model, &UiModel::printMessage,
           this, &MainWindow::printMessage);
+  connect(model, &UiModel::hasShaders,
+          [=]() { tabs->setTabVisible(shaderTab, true); });
 }
 
 void

@@ -213,6 +213,11 @@ UiModel::onShaderAssembly(RenderId renderId,
   m_shader_model->setAssembly(renderId, selectionCount, vertex,
                               fragment, tess_control, tess_eval,
                               geom, comp);
+  if (!vertex.shader.empty() || !fragment.shader.empty() ||
+      !tess_control.shader.empty() || !tess_eval.shader.empty() ||
+      !geom.shader.empty() || !comp.shader.empty()) {
+    emit hasShaders();
+  }
 }
 
 void
