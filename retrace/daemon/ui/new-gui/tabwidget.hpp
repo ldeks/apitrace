@@ -52,8 +52,6 @@ class TabWidget : public QTabWidget {
   QVector<int> indices;
   QVector<QWidget *> tabs;
   QStringList names;
-  QBitArray mask;
-  int tabCount;
 };
 
 }  // namespace glretrace
