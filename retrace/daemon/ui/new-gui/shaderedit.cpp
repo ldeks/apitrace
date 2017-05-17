@@ -27,7 +27,9 @@
 
 #include "shaderedit.hpp"
 
+#include <QIcon>
 #include <QSizePolicy>
+#include <QRegExp>
 
 using glretrace::ShaderEdit;
 using glretrace::RenderShaders;
@@ -39,6 +41,37 @@ ShaderEdit::sourceStyleSheet =
     "  background-color: White;\n"
     "  border: 1px solid DarkGray;\n"
     "  selection-background-color: LightSteelBlue;\n"
+    "}";
+
+const char *
+ShaderEdit::findButtonStyleSheet =
+    "QToolButton {\n"
+    "  border: 1px solid DarkGray;\n"
+    "  border-radius: 0px;\n"
+    "  width: 23px;\n"
+    "  height: 23px;\n"
+    "}";
+
+const char *
+ShaderEdit::findEditNormalStyleSheet =
+    "QLineEdit {\n"
+    "  border: 1px solid gray;\n"
+    "  border-radius: 0px;\n"
+    "  background-color: white;\n"
+    "  color: Black;\n"
+    "  width: 300px;\n"
+    "  height: 26px;\n"
+    "}";
+
+const char *
+ShaderEdit::findEditRedStyleSheet =
+    "QLineEdit {\n"
+    "  border: 1px solid gray;\n"
+    "  border-radius: 0px;\n"
+    "  background-color: Salmon;\n"
+    "  color: White;\n"
+    "  width: 300px;\n"
+    "  height: 26px;\n"
     "}";
 
 const char *
@@ -63,12 +96,29 @@ ShaderEdit::ShaderEdit(QWidget *parent) : TabWidget(parent) {
   compileLayout = new QHBoxLayout(compileArea);
   compileArea->setLayout(compileLayout);
   compileLayout->setSpacing(0);
+  findEdit = new QLineEdit(source);
+  findEdit->setClearButtonEnabled(true);
+  findEdit->setPlaceholderText("Find in shader");
+  findEdit->setStyleSheet(findEditNormalStyleSheet);
+  findUp = new QToolButton(findEdit);
+  findUp->setToolTip("Find previous");
+  findUp->setArrowType(Qt::UpArrow);
+  findUp->setStyleSheet(findButtonStyleSheet);
+  findUp->setEnabled(false);
+  findDown = new QToolButton(findEdit);
+  findDown->setToolTip("Find next");
+  findDown->setArrowType(Qt::DownArrow);
+  findDown->setStyleSheet(findButtonStyleSheet);
+  findDown->setEnabled(false);
   compileButton = new QPushButton("Compile", source);
   compileButton->setEnabled(false);
   compileSpacer = new QWidget(source);
   // Horizontal spacer
   compileSpacer->setSizePolicy(QSizePolicy::MinimumExpanding,
                                QSizePolicy::Maximum);
+  compileLayout->addWidget(findEdit);
+  compileLayout->addWidget(findUp);
+  compileLayout->addWidget(findDown);
   compileLayout->addWidget(compileSpacer);
   compileLayout->addWidget(compileButton);
   sourceLayout->addWidget(compileArea);
@@ -92,6 +142,8 @@ ShaderEdit::ShaderEdit(QWidget *parent) : TabWidget(parent) {
   pushAnalysis = initTab("Push Analysis");
   codeHoisting = initTab("Code Hoisting");
   codeSinking = initTab("Code Sinking");
+
+  makeConnections();
 }
 
 ShaderEdit::~ShaderEdit() {
@@ -106,6 +158,16 @@ ShaderEdit::initTab(QString name) {
   setTabVisible(tab, false); // Hide tab unless text.
 
   return tab;
+}
+
+void
+ShaderEdit::makeConnections() {
+  connect(findEdit, &QLineEdit::textEdited,
+          this, &ShaderEdit::findRegExp);
+  connect(findUp, &QToolButton::pressed,
+          this, &ShaderEdit::findPrevious);
+  connect(findDown, &QToolButton::pressed,
+          this, &ShaderEdit::findNext);
 }
 
 void
@@ -184,4 +246,56 @@ ShaderEdit::hasText() {
     return true;
   else
     return false;
+}
+
+void
+ShaderEdit::findRegExp(const QString &text) {
+  if (text.isEmpty()) {
+    findUp->setEnabled(false);
+    findDown->setEnabled(false);
+    findEdit->setStyleSheet(findEditNormalStyleSheet);
+    return;
+  }
+
+  if (sourceText->find(QRegExp(text))) {
+    findEdit->setStyleSheet(findEditNormalStyleSheet);
+    findUp->setEnabled(true);
+    findDown->setEnabled(true);
+  } else {
+    findEdit->setStyleSheet(findEditRedStyleSheet);
+    findUp->setEnabled(false);
+    findDown->setEnabled(false);
+  }
+}
+
+void
+ShaderEdit::findPrevious() {
+  if (!sourceText->find(QRegExp(findEdit->text()),
+                        QTextDocument::FindBackward)) {
+    findEdit->setStyleSheet(findEditRedStyleSheet);
+
+    //Go to the end of the document and check again.
+    sourceText->moveCursor(QTextCursor::End);
+    if (sourceText->find(QRegExp(findEdit->text()),
+                         QTextDocument::FindBackward)) {
+      findEdit->setStyleSheet(findEditNormalStyleSheet);
+    }
+
+  } else {
+    findEdit->setStyleSheet(findEditNormalStyleSheet);
+  }
+}
+
+void
+ShaderEdit::findNext() {
+  if (!sourceText->find(QRegExp(findEdit->text()))) {
+    findEdit->setStyleSheet(findEditRedStyleSheet);
+
+    // Go to the beginning of the document and check again.
+    sourceText->moveCursor(QTextCursor::Start);
+    if (sourceText->find(QRegExp(findEdit->text())))
+      findEdit->setStyleSheet(findEditNormalStyleSheet);
+  } else {
+    findEdit->setStyleSheet(findEditNormalStyleSheet);
+  }
 }
