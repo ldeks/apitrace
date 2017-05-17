@@ -30,6 +30,7 @@
 #include <QSizePolicy>
 
 using glretrace::ShaderTab;
+using glretrace::TabWidget;
 
 // From Qt style sheets examples "Customizing QListView"
 const char *
@@ -67,21 +68,26 @@ ShaderTab::ShaderTab(QWidget *parent) : QWidget(parent) {
   layout->addWidget(renderSelection);
 
   // Tabs
-  tabs = new QTabWidget(this);
+  tabs = new TabWidget(this);
   vertex = new ShaderEdit(this);
   tabs->addTab(vertex, "Vertex");
+  tabs->setTabVisible(vertex, false);
   fragment = new ShaderEdit(this);
   tabs->addTab(fragment, "Fragment");
+  tabs->setTabVisible(fragment, false);
   tesselation = new QTabWidget(this);
   tabs->addTab(tesselation, "Tesselation");
+  tabs->setTabVisible(tesselation, false);
   tessControl = new ShaderEdit(this);
   tesselation->addTab(tessControl, "Control");
   tessEval = new ShaderEdit(this);
   tesselation->addTab(tessEval, "Evaluation");
   geometry = new ShaderEdit(this);
   tabs->addTab(geometry, "Geometry");
+  tabs->setTabVisible(geometry, false);
   compute = new ShaderEdit(this);
   tabs->addTab(compute, "Compute");
+  tabs->setTabVisible(compute, false);
   layout->addWidget(tabs);
 
   makeConnections();
@@ -127,20 +133,21 @@ ShaderTab::convertActivation(const QModelIndex &index) {
 
 void
 ShaderTab::populateTabs(RenderShaders *rs) {
-  populateEdit(rs, vertex, "vertex");
-  populateEdit(rs, fragment, "fragment");
-  populateEdit(rs, tessControl, "tess_control");
-  populateEdit(rs, tessEval, "tess_eval");
-  populateEdit(rs, geometry, "geometry");
-  populateEdit(rs, compute, "compute");
-}
+  vertex->populate(rs, "vertex");
+  tabs->setTabVisible(vertex, vertex->hasText());
 
-void
-ShaderTab::populateEdit(RenderShaders *rs, ShaderEdit *edit,
-                        QString shaderType) {
-  edit->setText("source", rs->getShaderText(shaderType, "shader"));
-  edit->setText("ir", rs->getShaderText(shaderType, "ir"));
-  edit->setText("ssa", rs->getShaderText(shaderType, "ssa"));
-  edit->setText("nir", rs->getShaderText(shaderType, "nir"));
-  edit->setText("simd8", rs->getShaderText(shaderType, "simd8"));
+  fragment->populate(rs, "fragment");
+  tabs->setTabVisible(fragment, fragment->hasText());
+
+  tessControl->populate(rs, "tess_control");
+  tessEval->populate(rs, "tess_eval");
+  tabs->setTabVisible(tesselation,
+                      tessEval->hasText() | tessControl->hasText());
+
+  geometry->populate(rs, "geometry");
+  tabs->setTabVisible(geometry, geometry->hasText());
+
+  compute->populate(rs, "compute");
+  tabs->setTabVisible(compute, compute->hasText());
+
 }

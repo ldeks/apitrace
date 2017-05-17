@@ -31,20 +31,24 @@
 
 #include <QHBoxLayout>
 #include <QPushButton>
-#include <QTabWidget>
 #include <QTextEdit>
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "rendershaders.hpp"
+#include "tabwidget.hpp"
+
 namespace glretrace {
 
-class ShaderEdit : public QTabWidget {
+class ShaderEdit : public TabWidget {
   Q_OBJECT
  public:
   explicit ShaderEdit(QWidget *parent = 0);
   virtual ~ShaderEdit();
 
-  void setText(QString tabname, QString text);
+  void setText(QTextEdit *edit, QString text);
+  void populate(RenderShaders *rs, QString shaderType);
+  bool hasText();
 
  private:
   QTextEdit* initTab(QString name);
@@ -66,6 +70,18 @@ class ShaderEdit : public QTabWidget {
   QTextEdit *ssa;
   QTextEdit *nir;
   QTextEdit *simd8;
+  QTextEdit *simd16;
+  QTextEdit *simd32;
+  QTextEdit *beforeUnification;
+  QTextEdit *afterUnification;
+  QTextEdit *beforeOptimization;
+  QTextEdit *constCoalescing;
+  QTextEdit *genIrLowering;
+  QTextEdit *layoutState;
+  QTextEdit *optimized;
+  QTextEdit *pushAnalysis;
+  QTextEdit *codeHoisting;
+  QTextEdit *codeSinking;
 };
 
 }  // namespace glretrace
