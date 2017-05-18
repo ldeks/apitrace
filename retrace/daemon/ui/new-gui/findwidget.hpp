@@ -14,7 +14,7 @@
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANEDITILITY,
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
@@ -23,70 +23,53 @@
  *
  * Authors:
  *   Laura Ekstrand <laura@jlekstrand.net>
+ *
+ *   This was styled after the Mozilla Firefox find bar.
  **************************************************************************/
 
 
-#ifndef _SHADEREDIT_HPP_
-#define _SHADEREDIT_HPP_
+#ifndef _FINDWIDGET_HPP_
+#define _FINDWIDGET_HPP_
 
 #include <QHBoxLayout>
-#include <QPushButton>
+#include <QLineEdit>
 #include <QTextEdit>
-#include <QVBoxLayout>
+#include <QToolButton>
 #include <QWidget>
-
-#include "rendershaders.hpp"
-#include "tabwidget.hpp"
-#include "findwidget.hpp"
 
 namespace glretrace {
 
-class ShaderEdit : public TabWidget {
+class FindWidget : public QWidget {
   Q_OBJECT
  public:
-  explicit ShaderEdit(QWidget *parent = 0);
-  virtual ~ShaderEdit();
+  explicit FindWidget(QWidget *parent = 0);
+  virtual ~FindWidget();
 
-  void setText(QTextEdit *edit, QString text);
-  void populate(RenderShaders *rs, QString shaderType);
-  bool hasText();
+  void setTextEdit(QTextEdit *te);
 
  private:
-  QTextEdit* initTab(QString name);
   void makeConnections();
+  bool find(const QString &text,
+    QTextDocument::FindFlags options = QTextDocument::FindFlags());
+  void moveCursor(QTextCursor::MoveOperation operation,
+    QTextCursor::MoveMode mode = QTextCursor::MoveAnchor);
+
+ public slots:
+  void findRegExp(const QString &text);
+  void findPrevious();
+  void findNext();
 
  protected:
-  // Source tab.
-  QWidget *source;
-  QVBoxLayout *sourceLayout;
-  static const char *sourceStyleSheet;
-  QTextEdit *sourceText;
-  QWidget *compileArea;
-  QHBoxLayout *compileLayout;
-  FindWidget *findWidget;
-  QPushButton *compileButton;
-  QWidget *compileSpacer;
-
-  // Other tabs.
-  static const char *styleSheet;
-  QTextEdit *ir;
-  QTextEdit *ssa;
-  QTextEdit *nir;
-  QTextEdit *simd8;
-  QTextEdit *simd16;
-  QTextEdit *simd32;
-  QTextEdit *beforeUnification;
-  QTextEdit *afterUnification;
-  QTextEdit *beforeOptimization;
-  QTextEdit *constCoalescing;
-  QTextEdit *genIrLowering;
-  QTextEdit *layoutState;
-  QTextEdit *optimized;
-  QTextEdit *pushAnalysis;
-  QTextEdit *codeHoisting;
-  QTextEdit *codeSinking;
+  QHBoxLayout *layout;
+  QLineEdit *findEdit;
+  static const char *findEditNormalStyleSheet;
+  static const char *findEditRedStyleSheet;
+  static const char *findButtonStyleSheet;
+  QToolButton *findUp;
+  QToolButton *findDown;
+  QTextEdit *edit;
 };
 
 }  // namespace glretrace
 
-#endif  // _SHADEREDIT_HPP_
+#endif  // _FINDWIDGET_HPP_
