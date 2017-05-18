@@ -38,7 +38,7 @@
 #include <QWidget>
 
 #include "uimodel.hpp"
-#include "shaderedit.hpp"
+#include "shaderdisplay.hpp"
 #include "rendershaders.hpp"
 #include "tabwidget.hpp"
 
@@ -69,13 +69,13 @@ class ShaderTab : public QWidget {
   QListView *renderSelection;
   static const char *listStyleSheet;
   TabWidget *tabs;
-  ShaderEdit *vertex;
-  ShaderEdit *fragment;
+  ShaderDisplay *vertex;
+  ShaderDisplay *fragment;
   QTabWidget *tesselation;
-  ShaderEdit *tessControl;
-  ShaderEdit *tessEval;
-  ShaderEdit *geometry;
-  ShaderEdit *compute;
+  ShaderDisplay *tessControl;
+  ShaderDisplay *tessEval;
+  ShaderDisplay *geometry;
+  ShaderDisplay *compute;
 
   // Model
   UiModel* model;
