@@ -26,8 +26,8 @@
  **************************************************************************/
 
 
-#ifndef _SHADEREDIT_HPP_
-#define _SHADEREDIT_HPP_
+#ifndef _SHADERDISPLAY_HPP_
+#define _SHADERDISPLAY_HPP_
 
 #include <QHBoxLayout>
 #include <QPushButton>
@@ -41,11 +41,11 @@
 
 namespace glretrace {
 
-class ShaderEdit : public TabWidget {
+class ShaderDisplay : public TabWidget {
   Q_OBJECT
  public:
-  explicit ShaderEdit(QWidget *parent = 0);
-  virtual ~ShaderEdit();
+  explicit ShaderDisplay(QWidget *parent = 0);
+  virtual ~ShaderDisplay();
 
   void setText(QTextEdit *edit, QString text);
   void populate(RenderShaders *rs, QString shaderType);
@@ -89,4 +89,4 @@ class ShaderEdit : public TabWidget {
 
 }  // namespace glretrace
 
-#endif  // _SHADEREDIT_HPP_
+#endif  // _SHADERDISPLAY_HPP_

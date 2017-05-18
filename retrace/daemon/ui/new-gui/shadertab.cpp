@@ -69,23 +69,23 @@ ShaderTab::ShaderTab(QWidget *parent) : QWidget(parent) {
 
   // Tabs
   tabs = new TabWidget(this);
-  vertex = new ShaderEdit(this);
+  vertex = new ShaderDisplay(this);
   tabs->addTab(vertex, "Vertex");
   tabs->setTabVisible(vertex, false);
-  fragment = new ShaderEdit(this);
+  fragment = new ShaderDisplay(this);
   tabs->addTab(fragment, "Fragment");
   tabs->setTabVisible(fragment, false);
   tesselation = new QTabWidget(this);
   tabs->addTab(tesselation, "Tesselation");
   tabs->setTabVisible(tesselation, false);
-  tessControl = new ShaderEdit(this);
+  tessControl = new ShaderDisplay(this);
   tesselation->addTab(tessControl, "Control");
-  tessEval = new ShaderEdit(this);
+  tessEval = new ShaderDisplay(this);
   tesselation->addTab(tessEval, "Evaluation");
-  geometry = new ShaderEdit(this);
+  geometry = new ShaderDisplay(this);
   tabs->addTab(geometry, "Geometry");
   tabs->setTabVisible(geometry, false);
-  compute = new ShaderEdit(this);
+  compute = new ShaderDisplay(this);
   tabs->addTab(compute, "Compute");
   tabs->setTabVisible(compute, false);
   layout->addWidget(tabs);

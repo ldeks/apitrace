@@ -47,7 +47,7 @@ set (UI_HDRS
   metricmodel.hpp
   zoombar.hpp
   shadertab.hpp
-  shaderedit.hpp
+  shaderdisplay.hpp
   shadermodel.hpp
   rendershaders.hpp
   tabwidget.hpp
@@ -65,7 +65,7 @@ set (UI_SRC
   metricmodel.cpp
   zoombar.cpp
   shadertab.cpp
-  shaderedit.cpp
+  shaderdisplay.cpp
   shadermodel.cpp
   rendershaders.cpp
   tabwidget.cpp

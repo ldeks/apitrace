@@ -25,17 +25,17 @@
  *   Laura Ekstrand <laura@jlekstrand.net>
  **************************************************************************/
 
-#include "shaderedit.hpp"
+#include "shaderdisplay.hpp"
 
 #include <QIcon>
 #include <QSizePolicy>
 
-using glretrace::ShaderEdit;
+using glretrace::ShaderDisplay;
 using glretrace::RenderShaders;
 
 // From Qt style sheets examples "Customizing QAbstractScrollArea"
 const char *
-ShaderEdit::sourceStyleSheet =
+ShaderDisplay::sourceStyleSheet =
     "QTextEdit {\n"
     "  background-color: White;\n"
     "  border: 1px solid DarkGray;\n"
@@ -43,13 +43,13 @@ ShaderEdit::sourceStyleSheet =
     "}";
 
 const char *
-ShaderEdit::styleSheet =
+ShaderDisplay::styleSheet =
     "QTextEdit {\n"
     "  background-color: transparent;\n"
     "  selection-background-color: LightSteelBlue;\n"
     "}";
 
-ShaderEdit::ShaderEdit(QWidget *parent) : TabWidget(parent) {
+ShaderDisplay::ShaderDisplay(QWidget *parent) : TabWidget(parent) {
   // Source tab.
   source = new QWidget(this);
   sourceLayout = new QVBoxLayout(source);
@@ -98,11 +98,11 @@ ShaderEdit::ShaderEdit(QWidget *parent) : TabWidget(parent) {
   codeSinking = initTab("Code Sinking");
 }
 
-ShaderEdit::~ShaderEdit() {
+ShaderDisplay::~ShaderDisplay() {
 }
 
 QTextEdit*
-ShaderEdit::initTab(QString name) {
+ShaderDisplay::initTab(QString name) {
   QTextEdit *tab = new QTextEdit(this);
   tab->setStyleSheet(styleSheet);
   tab->setFontFamily("monospace");
@@ -113,7 +113,7 @@ ShaderEdit::initTab(QString name) {
 }
 
 void
-ShaderEdit::setText(QTextEdit *edit, QString text) {
+ShaderDisplay::setText(QTextEdit *edit, QString text) {
   edit->setPlainText(text);
   // If user deletes all text in the shader, we don't want to
   // hide it suddenly.
@@ -122,7 +122,7 @@ ShaderEdit::setText(QTextEdit *edit, QString text) {
 }
 
 void
-ShaderEdit::populate(RenderShaders *rs, QString shaderType) {
+ShaderDisplay::populate(RenderShaders *rs, QString shaderType) {
   setText(sourceText, rs->getShaderText(shaderType, "shader"));
   setText(ir, rs->getShaderText(shaderType, "ir"));
   setText(ssa, rs->getShaderText(shaderType, "ssa"));
@@ -151,7 +151,7 @@ ShaderEdit::populate(RenderShaders *rs, QString shaderType) {
 }
 
 bool
-ShaderEdit::hasText() {
+ShaderDisplay::hasText() {
   if (!sourceText->toPlainText().isEmpty())
     return true;
   else if (!ir->toPlainText().isEmpty())
