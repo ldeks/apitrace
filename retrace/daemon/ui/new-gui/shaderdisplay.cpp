@@ -27,59 +27,13 @@
 
 #include "shaderdisplay.hpp"
 
-#include <QIcon>
-#include <QSizePolicy>
-
 using glretrace::ShaderDisplay;
 using glretrace::RenderShaders;
-
-// From Qt style sheets examples "Customizing QAbstractScrollArea"
-const char *
-ShaderDisplay::sourceStyleSheet =
-    "QTextEdit {\n"
-    "  background-color: White;\n"
-    "  border: 1px solid DarkGray;\n"
-    "  selection-background-color: LightSteelBlue;\n"
-    "}";
-
-const char *
-ShaderDisplay::styleSheet =
-    "QTextEdit {\n"
-    "  background-color: transparent;\n"
-    "  selection-background-color: LightSteelBlue;\n"
-    "}";
+using glretrace::ShaderTextWidget;
 
 ShaderDisplay::ShaderDisplay(QWidget *parent) : TabWidget(parent) {
-  // Source tab.
-  source = new QWidget(this);
-  sourceLayout = new QVBoxLayout(source);
-  source->setLayout(sourceLayout);
-  sourceLayout->setSpacing(0);
-  sourceText = new QTextEdit(source);
-  sourceText->setFontFamily("monospace");
-  sourceText->setStyleSheet(sourceStyleSheet);
-  sourceLayout->addWidget(sourceText);
-
-  compileArea = new QWidget(source);
-  compileLayout = new QHBoxLayout(compileArea);
-  compileArea->setLayout(compileLayout);
-  compileLayout->setSpacing(0);
-  findWidget = new FindWidget(compileArea);
-  findWidget->setTextEdit(sourceText);
-  compileButton = new QPushButton("Compile", source);
-  compileButton->setEnabled(false);
-  compileSpacer = new QWidget(source);
-  // Horizontal spacer
-  compileSpacer->setSizePolicy(QSizePolicy::MinimumExpanding,
-                               QSizePolicy::Maximum);
-  compileLayout->addWidget(findWidget);
-  compileLayout->addWidget(compileSpacer);
-  compileLayout->addWidget(compileButton);
-  sourceLayout->addWidget(compileArea);
-
-  addTab(source, "Source");
-
-  //Other tabs.
+  source = initTab("Source");
+  source->setCompileEnabled(true);
   ir = initTab("IR");
   ssa = initTab("SSA");
   nir = initTab("NIR");
@@ -96,16 +50,19 @@ ShaderDisplay::ShaderDisplay(QWidget *parent) : TabWidget(parent) {
   pushAnalysis = initTab("Push Analysis");
   codeHoisting = initTab("Code Hoisting");
   codeSinking = initTab("Code Sinking");
+
+  connect(source, &ShaderTextWidget::printMessage,
+          this, &ShaderDisplay::printMessage);
+  connect(nir, &ShaderTextWidget::printMessage,
+          this, &ShaderDisplay::printMessage);
 }
 
 ShaderDisplay::~ShaderDisplay() {
 }
 
-QTextEdit*
+ShaderTextWidget*
 ShaderDisplay::initTab(QString name) {
-  QTextEdit *tab = new QTextEdit(this);
-  tab->setStyleSheet(styleSheet);
-  tab->setFontFamily("monospace");
+  ShaderTextWidget *tab = new ShaderTextWidget(this);
   addTab(tab, name);
   setTabVisible(tab, false); // Hide tab unless text.
 
@@ -113,17 +70,18 @@ ShaderDisplay::initTab(QString name) {
 }
 
 void
-ShaderDisplay::setText(QTextEdit *edit, QString text) {
+ShaderDisplay::setText(ShaderTextWidget *edit, QString text) {
   edit->setPlainText(text);
-  // If user deletes all text in the shader, we don't want to
-  // hide it suddenly.
-  if (edit != source)
+
+  // Don't hide the tab if it's a currently visible
+  // source tab, because the user might be editing it.
+  if (!isTabVisible(edit) || (edit != source))
     setTabVisible(edit, !text.isEmpty());
 }
 
 void
 ShaderDisplay::populate(RenderShaders *rs, QString shaderType) {
-  setText(sourceText, rs->getShaderText(shaderType, "shader"));
+  setText(source, rs->getShaderText(shaderType, "shader"));
   setText(ir, rs->getShaderText(shaderType, "ir"));
   setText(ssa, rs->getShaderText(shaderType, "ssa"));
   setText(nir, rs->getShaderText(shaderType, "nir"));
@@ -152,7 +110,7 @@ ShaderDisplay::populate(RenderShaders *rs, QString shaderType) {
 
 bool
 ShaderDisplay::hasText() {
-  if (!sourceText->toPlainText().isEmpty())
+  if (!source->toPlainText().isEmpty())
     return true;
   else if (!ir->toPlainText().isEmpty())
     return true;

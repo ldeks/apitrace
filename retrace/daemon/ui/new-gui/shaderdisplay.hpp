@@ -29,15 +29,11 @@
 #ifndef _SHADERDISPLAY_HPP_
 #define _SHADERDISPLAY_HPP_
 
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QTextEdit>
-#include <QVBoxLayout>
 #include <QWidget>
 
 #include "rendershaders.hpp"
 #include "tabwidget.hpp"
-#include "findwidget.hpp"
+#include "shadertextwidget.hpp"
 
 namespace glretrace {
 
@@ -47,44 +43,34 @@ class ShaderDisplay : public TabWidget {
   explicit ShaderDisplay(QWidget *parent = 0);
   virtual ~ShaderDisplay();
 
-  void setText(QTextEdit *edit, QString text);
+  void setText(ShaderTextWidget *edit, QString text);
   void populate(RenderShaders *rs, QString shaderType);
   bool hasText();
 
+ signals:
+  void printMessage(QString msg);
+
  private:
-  QTextEdit* initTab(QString name);
-  void makeConnections();
+  ShaderTextWidget* initTab(QString name);
 
  protected:
-  // Source tab.
-  QWidget *source;
-  QVBoxLayout *sourceLayout;
-  static const char *sourceStyleSheet;
-  QTextEdit *sourceText;
-  QWidget *compileArea;
-  QHBoxLayout *compileLayout;
-  FindWidget *findWidget;
-  QPushButton *compileButton;
-  QWidget *compileSpacer;
-
-  // Other tabs.
-  static const char *styleSheet;
-  QTextEdit *ir;
-  QTextEdit *ssa;
-  QTextEdit *nir;
-  QTextEdit *simd8;
-  QTextEdit *simd16;
-  QTextEdit *simd32;
-  QTextEdit *beforeUnification;
-  QTextEdit *afterUnification;
-  QTextEdit *beforeOptimization;
-  QTextEdit *constCoalescing;
-  QTextEdit *genIrLowering;
-  QTextEdit *layoutState;
-  QTextEdit *optimized;
-  QTextEdit *pushAnalysis;
-  QTextEdit *codeHoisting;
-  QTextEdit *codeSinking;
+  ShaderTextWidget *source;
+  ShaderTextWidget *ir;
+  ShaderTextWidget *ssa;
+  ShaderTextWidget *nir;
+  ShaderTextWidget *simd8;
+  ShaderTextWidget *simd16;
+  ShaderTextWidget *simd32;
+  ShaderTextWidget *beforeUnification;
+  ShaderTextWidget *afterUnification;
+  ShaderTextWidget *beforeOptimization;
+  ShaderTextWidget *constCoalescing;
+  ShaderTextWidget *genIrLowering;
+  ShaderTextWidget *layoutState;
+  ShaderTextWidget *optimized;
+  ShaderTextWidget *pushAnalysis;
+  ShaderTextWidget *codeHoisting;
+  ShaderTextWidget *codeSinking;
 };
 
 }  // namespace glretrace
