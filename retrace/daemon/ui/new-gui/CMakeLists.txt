@@ -52,6 +52,7 @@ set (UI_HDRS
   rendershaders.hpp
   tabwidget.hpp
   findwidget.hpp
+  shadertextwidget.hpp
 )
 
 set (UI_SRC
@@ -70,6 +71,7 @@ set (UI_SRC
   rendershaders.cpp
   tabwidget.cpp
   findwidget.cpp
+  shadertextwidget.cpp
 )
 
 add_executable(fr-new-gui

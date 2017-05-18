@@ -26,51 +26,40 @@
  **************************************************************************/
 
 
-#ifndef _SHADERDISPLAY_HPP_
-#define _SHADERDISPLAY_HPP_
+#ifndef _SHADERTEXTWIDGET_HPP_
+#define _SHADERTEXTWIDGET_HPP_
 
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QTextEdit>
+#include <QVBoxLayout>
 #include <QWidget>
 
-#include "rendershaders.hpp"
-#include "tabwidget.hpp"
-#include "shadertextwidget.hpp"
+#include "findwidget.hpp"
 
 namespace glretrace {
 
-class ShaderDisplay : public TabWidget {
+class ShaderTextWidget : public QWidget {
   Q_OBJECT
  public:
-  explicit ShaderDisplay(QWidget *parent = 0);
-  virtual ~ShaderDisplay();
+  explicit ShaderTextWidget(QWidget *parent = 0);
+  virtual ~ShaderTextWidget();
 
-  void setText(ShaderTextWidget *edit, QString text);
-  void populate(RenderShaders *rs, QString shaderType);
-  bool hasText();
-
- private:
-  ShaderTextWidget* initTab(QString name);
-  void makeConnections();
+  void setCompileEnabled(bool enabled);
+  void setPlainText(const QString &plainText);
+  QString toPlainText();
 
  protected:
-  ShaderTextWidget *source;
-  ShaderTextWidget *ir;
-  ShaderTextWidget *ssa;
-  ShaderTextWidget *nir;
-  ShaderTextWidget *simd8;
-  ShaderTextWidget *simd16;
-  ShaderTextWidget *simd32;
-  ShaderTextWidget *beforeUnification;
-  ShaderTextWidget *afterUnification;
-  ShaderTextWidget *beforeOptimization;
-  ShaderTextWidget *constCoalescing;
-  ShaderTextWidget *genIrLowering;
-  ShaderTextWidget *layoutState;
-  ShaderTextWidget *optimized;
-  ShaderTextWidget *pushAnalysis;
-  ShaderTextWidget *codeHoisting;
-  ShaderTextWidget *codeSinking;
+  QVBoxLayout *layout;
+  static const char *normalStyleSheet;
+  static const char *editStyleSheet;
+  QTextEdit *text;
+  QWidget *toolsArea;
+  QHBoxLayout *toolsLayout;
+  FindWidget *findWidget;
+  QPushButton *compileButton;
 };
 
 }  // namespace glretrace
 
-#endif  // _SHADERDISPLAY_HPP_
+#endif  // _SHADERTEXTWIDGET_HPP_

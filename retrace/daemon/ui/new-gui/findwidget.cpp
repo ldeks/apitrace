@@ -69,7 +69,7 @@ FindWidget::FindWidget(QWidget *parent) : QWidget(parent),
   layout = new QHBoxLayout(this);
   findEdit = new QLineEdit(this);
   findEdit->setClearButtonEnabled(true);
-  findEdit->setPlaceholderText("Find RegExp in shader");
+  findEdit->setPlaceholderText("Find RegExp");
   findEdit->setStyleSheet(findEditNormalStyleSheet);
   findUp = new QToolButton(findEdit);
   findUp->setToolTip("Find previous");
@@ -93,7 +93,7 @@ FindWidget::FindWidget(QWidget *parent) : QWidget(parent),
 
 void
 FindWidget::makeConnections() {
-  connect(findEdit, &QLineEdit::textEdited,
+  connect(findEdit, &QLineEdit::textChanged,
           this, &FindWidget::findRegExp);
   connect(findUp, &QToolButton::pressed,
           this, &FindWidget::findPrevious);
