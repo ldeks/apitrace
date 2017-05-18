@@ -69,6 +69,9 @@ ShaderTextWidget::ShaderTextWidget(QWidget *parent) : QWidget(parent) {
   toolsLayout->addStretch();
   toolsLayout->addWidget(compileButton);
   layout->addWidget(toolsArea);
+
+  connect(findWidget, &FindWidget::printMessage,
+          this, &ShaderTextWidget::printMessage);
 }
 
 ShaderTextWidget::~ShaderTextWidget() {

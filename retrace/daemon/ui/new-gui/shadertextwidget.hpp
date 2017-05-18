@@ -49,6 +49,9 @@ class ShaderTextWidget : public QWidget {
   void setPlainText(const QString &plainText);
   QString toPlainText();
 
+ signals:
+  void printMessage(QString msg);
+
  protected:
   QVBoxLayout *layout;
   static const char *normalStyleSheet;

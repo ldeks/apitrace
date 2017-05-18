@@ -47,6 +47,9 @@ class FindWidget : public QWidget {
 
   void setTextEdit(QTextEdit *te);
 
+ signals:
+  void printMessage(QString msg);
+
  private:
   void makeConnections();
   bool find(const QString &text,

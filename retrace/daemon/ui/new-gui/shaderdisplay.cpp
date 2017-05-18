@@ -50,6 +50,11 @@ ShaderDisplay::ShaderDisplay(QWidget *parent) : TabWidget(parent) {
   pushAnalysis = initTab("Push Analysis");
   codeHoisting = initTab("Code Hoisting");
   codeSinking = initTab("Code Sinking");
+
+  connect(source, &ShaderTextWidget::printMessage,
+          this, &ShaderDisplay::printMessage);
+  connect(nir, &ShaderTextWidget::printMessage,
+          this, &ShaderDisplay::printMessage);
 }
 
 ShaderDisplay::~ShaderDisplay() {

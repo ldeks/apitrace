@@ -97,6 +97,8 @@ void
 ShaderTab::makeConnections() {
   connect(renderSelection, &QListView::clicked,
           this, &ShaderTab::convertActivation);
+  connect(vertex, &ShaderDisplay::printMessage,
+          this, &ShaderTab::printMessage);
 }
 
 ShaderTab::~ShaderTab() {
