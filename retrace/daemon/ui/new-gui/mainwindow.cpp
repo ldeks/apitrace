@@ -76,6 +76,7 @@ MainWindow::MainWindow() {
   graphArea->setLayout(graphAreaLayout);
   graph = new GraphWindow();
   graphContainer = QWidget::createWindowContainer(graph, this);
+  graphContainer->setMinimumSize(QSize(640, 128));
   graphContainer->setSizePolicy(QSizePolicy::Expanding,
                                 QSizePolicy::Expanding);
   graphAreaLayout->addWidget(graphContainer);
@@ -117,7 +118,8 @@ MainWindow::MainWindow() {
   tabs->addTab(shaderTab, "Shaders");
   // Hide Shaders tab until Shaders data exists.
   tabs->setTabVisible(shaderTab, false);
-  tabs->addTab(new QWidget(this), "RenderTarget");
+  renderTab = new RenderTab(this);
+  tabs->addTab(renderTab, "RenderTarget");
   apiTab = new ApiTab(this);
   tabs->addTab(apiTab, "API Calls");
   tabs->addTab(new QWidget(this), "Metrics");
