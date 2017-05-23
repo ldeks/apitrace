@@ -109,8 +109,7 @@ class UiModel : public QObject,
  public slots:
   void getShaderText(int renderIndex);
   void getApiText(int idx);
-  void setSelectionIndex(int idx);
-  void requestRenderTarget(RenderOptions opt, RenderTargetType rtt);
+  void requestRenderTarget(int idx, RenderOptions opt, RenderTargetType rtt);
 
  private:
   FrameRetraceStub m_retrace;

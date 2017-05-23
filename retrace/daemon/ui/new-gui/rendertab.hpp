@@ -54,11 +54,12 @@ class RenderTab : public QSplitter {
   RenderOptions getRenderOptions();
 
  signals:
-  void needRenderTarget(RenderOptions opt, RenderTargetType rtt);
+  void needRenderTarget(int idx, RenderOptions opt, RenderTargetType rtt);
 
  public slots:
   void setRenderImage(QPixmap p);
-  void requestRenderTarget();
+  void requestRenderTarget(int idx);
+  void updateRender();
 
  protected:
   static const char *handleStyleSheet;
@@ -68,6 +69,7 @@ class RenderTab : public QSplitter {
   QCheckBox *stopBox;
   QCheckBox *highlightBox;
   ImageView *view;
+  int currentIndex;
 
   // Model
   UiModel* model;

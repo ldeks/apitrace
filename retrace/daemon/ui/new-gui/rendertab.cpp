@@ -52,7 +52,8 @@ RenderTab::handleStyleSheet =
     "  image: url(:images/drag-me-pressed-transposed.png);\n"
     "}";
 
-RenderTab::RenderTab(QWidget *parent) : QSplitter(parent) {
+RenderTab::RenderTab(QWidget *parent) : QSplitter(parent),
+                                        currentIndex(0) {
   setOrientation(Qt::Horizontal);
   setStyleSheet(handleStyleSheet);
 
@@ -77,11 +78,11 @@ RenderTab::RenderTab(QWidget *parent) : QSplitter(parent) {
   addWidget(view);
 
   connect(clearBox, &QCheckBox::clicked,
-          this, &RenderTab::requestRenderTarget);
+          this, &RenderTab::updateRender);
   connect(stopBox, &QCheckBox::clicked,
-          this, &RenderTab::requestRenderTarget);
+          this, &RenderTab::updateRender);
   connect(highlightBox, &QCheckBox::clicked,
-          this, &RenderTab::requestRenderTarget);
+          this, &RenderTab::updateRender);
 }
 
 RenderTab::~RenderTab() {
@@ -119,6 +120,12 @@ RenderTab::setModel(UiModel *mdl) {
 }
 
 void
-RenderTab::requestRenderTarget() {
-  emit needRenderTarget(getRenderOptions(), getRenderTargetType());
+RenderTab::requestRenderTarget(int idx) {
+  currentIndex = idx;
+  emit needRenderTarget(idx, getRenderOptions(), getRenderTargetType());
+}
+
+void
+RenderTab::updateRender() {
+  requestRenderTarget(currentIndex);
 }

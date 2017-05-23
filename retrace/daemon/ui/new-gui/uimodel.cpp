@@ -317,14 +317,11 @@ UiModel::getApiText(int idx) {
 }
 
 void
-UiModel::setSelectionIndex(int idx) {
+UiModel::requestRenderTarget(int idx, RenderOptions opt,
+                             RenderTargetType rtt) {
   m_cached_selection.clear();
   m_cached_selection.append(idx);
   ++m_selection_count;
-}
-
-void
-UiModel::requestRenderTarget(RenderOptions opt, RenderTargetType rtt) {
   RenderSelection rs;
   glretrace::renderSelectionFromList(m_selection_count,
                                      m_cached_selection,

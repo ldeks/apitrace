@@ -225,12 +225,6 @@ MainWindow::setModel(UiModel* mdl) {
           [=]() { tabs->setTabVisible(shaderTab, true); });
   connect(model, &UiModel::renderImage,
           renderTab, &RenderTab::setRenderImage);
-  connect(shaderTab, &ShaderTab::shaderActivated,
-          model, &UiModel::setSelectionIndex);
-  connect(apiTab, &ApiTab::shaderActivated,
-          model, &UiModel::setSelectionIndex);
-  connect(graph, &GraphWindow::firstSelected,
-          model, &UiModel::setSelectionIndex);
 }
 
 void
