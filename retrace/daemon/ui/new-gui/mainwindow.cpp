@@ -171,12 +171,14 @@ MainWindow::connectSignals() {
           this, &MainWindow::printMessage);
   connect(shaderTab, &ShaderTab::printMessage,
           this, &MainWindow::printMessage);
-  connect(shaderTab, &ShaderTab::shaderActivated,
-          graph, &GraphWindow::setOneSelection);
-  connect(graph, &GraphWindow::firstSelected,
-          shaderTab, &ShaderTab::activateShader);
   connect(apiTab, &ApiTab::printMessage,
           this, &MainWindow::printMessage);
+
+  // On select connections
+  connect(shaderTab, &ShaderTab::shaderActivated,
+          graph, &GraphWindow::setOneSelection);
+  connect(graph, &GraphWindow::firstSelected,
+          shaderTab, &ShaderTab::activateShader);
   connect(apiTab, &ApiTab::shaderActivated,
           graph, &GraphWindow::setOneSelection);
   connect(graph, &GraphWindow::firstSelected,
@@ -185,6 +187,12 @@ MainWindow::connectSignals() {
           shaderTab, &ShaderTab::activateShader);
   connect(shaderTab, &ShaderTab::shaderActivated,
           apiTab, &ApiTab::activateShader);
+  connect(shaderTab, &ShaderTab::shaderActivated,
+          renderTab, &RenderTab::requestRenderTarget);
+  connect(apiTab, &ApiTab::shaderActivated,
+          renderTab, &RenderTab::requestRenderTarget);
+  connect(graph, &GraphWindow::firstSelected,
+          renderTab, &RenderTab::requestRenderTarget);
 }
 
 void
@@ -200,6 +208,7 @@ MainWindow::setModel(UiModel* mdl) {
   dialog->setModel(model);
   shaderTab->setModel(model);
   apiTab->setModel(model);
+  renderTab->setModel(model);
   connect(model, &UiModel::frameCountChanged,
           this, &MainWindow::updateProgress);
   connect(model, &UiModel::fileLoadFinished,
@@ -214,6 +223,14 @@ MainWindow::setModel(UiModel* mdl) {
           this, &MainWindow::printMessage);
   connect(model, &UiModel::hasShaders,
           [=]() { tabs->setTabVisible(shaderTab, true); });
+  connect(model, &UiModel::renderImage,
+          renderTab, &RenderTab::setRenderImage);
+  connect(shaderTab, &ShaderTab::shaderActivated,
+          model, &UiModel::setSelectionIndex);
+  connect(apiTab, &ApiTab::shaderActivated,
+          model, &UiModel::setSelectionIndex);
+  connect(graph, &GraphWindow::firstSelected,
+          model, &UiModel::setSelectionIndex);
 }
 
 void

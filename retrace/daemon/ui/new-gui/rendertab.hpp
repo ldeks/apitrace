@@ -30,11 +30,14 @@
 #define _RENDERTAB_HPP_
 
 #include <QCheckBox>
+#include <QPixmap>
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QWidget>
 
 #include "imageview.hpp"
+#include "glframe_retrace_interface.hpp"
+#include "uimodel.hpp"
 
 namespace glretrace {
 
@@ -44,6 +47,19 @@ class RenderTab : public QSplitter {
   explicit RenderTab(QWidget *parent = 0);
   virtual ~RenderTab();
 
+  void setModel(UiModel *mdl);
+
+ private:
+  RenderTargetType getRenderTargetType();
+  RenderOptions getRenderOptions();
+
+ signals:
+  void needRenderTarget(RenderOptions opt, RenderTargetType rtt);
+
+ public slots:
+  void setRenderImage(QPixmap p);
+  void requestRenderTarget();
+
  protected:
   static const char *handleStyleSheet;
   QWidget *controlsArea;
@@ -52,6 +68,9 @@ class RenderTab : public QSplitter {
   QCheckBox *stopBox;
   QCheckBox *highlightBox;
   ImageView *view;
+
+  // Model
+  UiModel* model;
 };
 
 }  // namespace glretrace

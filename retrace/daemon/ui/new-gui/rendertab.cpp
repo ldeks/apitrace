@@ -30,6 +30,8 @@
 #include <QSizePolicy>
 
 using glretrace::RenderTab;
+using glretrace::RenderTargetType;
+using glretrace::RenderOptions;
 
 // From Qt style sheets examples "Customizing QSplitter"
 const char *
@@ -73,7 +75,50 @@ RenderTab::RenderTab(QWidget *parent) : QSplitter(parent) {
   view->setImage(QPixmap(":/images/no-render-target.png"));
   view->setMinimumSize(QSize(480, 360));
   addWidget(view);
+
+  connect(clearBox, &QCheckBox::clicked,
+          this, &RenderTab::requestRenderTarget);
+  connect(stopBox, &QCheckBox::clicked,
+          this, &RenderTab::requestRenderTarget);
+  connect(highlightBox, &QCheckBox::clicked,
+          this, &RenderTab::requestRenderTarget);
 }
 
 RenderTab::~RenderTab() {
+}
+
+void
+RenderTab::setRenderImage(QPixmap p) {
+  view->setImage(p);
+}
+
+RenderTargetType
+RenderTab::getRenderTargetType() {
+  if (highlightBox->isChecked())
+    return HIGHLIGHT_RENDER;
+  else
+    return NORMAL_RENDER;
+}
+
+RenderOptions
+RenderTab::getRenderOptions() {
+  RenderOptions opt = DEFAULT_RENDER;
+  if (clearBox->isChecked())
+    opt = (RenderOptions) (opt | CLEAR_BEFORE_RENDER);
+  if (stopBox->isChecked())
+    opt = (RenderOptions) (opt | STOP_AT_RENDER);
+
+  return opt;
+}
+
+void
+RenderTab::setModel(UiModel *mdl) {
+  model = mdl;
+  connect(this, &RenderTab::needRenderTarget,
+          model, &UiModel::requestRenderTarget);
+}
+
+void
+RenderTab::requestRenderTarget() {
+  emit needRenderTarget(getRenderOptions(), getRenderTargetType());
 }

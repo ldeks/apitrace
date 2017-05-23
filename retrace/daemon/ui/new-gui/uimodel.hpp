@@ -104,10 +104,13 @@ class UiModel : public QObject,
   void printMessage(QString msg);
   void hasShaders();
   void apiTextObject(QStringList text);
+  void renderImage(QPixmap p);
 
  public slots:
   void getShaderText(int renderIndex);
   void getApiText(int idx);
+  void setSelectionIndex(int idx);
+  void requestRenderTarget(RenderOptions opt, RenderTargetType rtt);
 
  private:
   FrameRetraceStub m_retrace;
