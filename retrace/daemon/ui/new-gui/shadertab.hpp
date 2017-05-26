@@ -40,6 +40,7 @@
 #include "uimodel.hpp"
 #include "shaderedit.hpp"
 #include "rendershaders.hpp"
+#include "tabwidget.hpp"
 
 namespace glretrace {
 
@@ -67,7 +68,7 @@ class ShaderTab : public QWidget {
   QStringListModel *rendersModel;
   QListView *renderSelection;
   static const char *listStyleSheet;
-  QTabWidget *tabs;
+  TabWidget *tabs;
   ShaderEdit *vertex;
   ShaderEdit *fragment;
   QTabWidget *tesselation;
@@ -81,8 +82,6 @@ class ShaderTab : public QWidget {
 
  private:
   void makeConnections();
-  void populateEdit(RenderShaders *rs, ShaderEdit *edit,
-                    QString shaderType);
 };
 
 }  // namespace glretrace
