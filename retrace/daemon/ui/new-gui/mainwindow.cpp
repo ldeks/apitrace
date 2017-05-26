@@ -163,6 +163,8 @@ MainWindow::connectSignals() {
           graph, &GraphWindow::setTranslation);
   connect(graph, &GraphWindow::printMessage,
           this, &MainWindow::printMessage);
+  connect(shaderTab, &ShaderTab::printMessage,
+          this, &MainWindow::printMessage);
 }
 
 void
@@ -187,6 +189,8 @@ MainWindow::setModel(UiModel* mdl) {
           this, &MainWindow::updateGraphData);
   connect(model, &UiModel::generalError,
           this, &MainWindow::errorMessage);
+  connect(model, &UiModel::printMessage,
+          this, &MainWindow::printMessage);
 }
 
 void
@@ -236,7 +240,6 @@ MainWindow::updateGraphData(QString name, QVector<float> data) {
   if (name == QString()) {
     name = QString("None");
   }
-  statusBar()->showMessage(name);
 
   if (graphData.isEmpty()) {
      for (int i = 0; i < data.size(); i++) {

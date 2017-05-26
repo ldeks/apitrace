@@ -14,7 +14,7 @@
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANEDITILITY,
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
@@ -26,48 +26,47 @@
  **************************************************************************/
 
 
-#ifndef _SHADERDISPLAY_HPP_
-#define _SHADERDISPLAY_HPP_
+#ifndef _SHADERMODEL_HPP_
+#define _SHADERMODEL_HPP_
 
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QTabWidget>
-#include <QTextEdit>
-#include <QVBoxLayout>
-#include <QWidget>
+#include <QObject>
+#include <QStringList>
+#include <QVector>
+
+#include "glframe_retrace_interface.hpp"
+#include "rendershaders.hpp"
 
 namespace glretrace {
 
-class ShaderDisplay : public QTabWidget {
+class ShaderModel : public QObject {
   Q_OBJECT
+
  public:
-  explicit ShaderDisplay(QWidget *parent = 0);
-  virtual ~ShaderDisplay();
+  ShaderModel(int count);
+  ~ShaderModel();
 
-  void setText(QString tabname, QString text);
+  QStringList getRenderStrings() { return renderStrings; }
+  void setAssembly(RenderId renderId,
+                   SelectionId selectionCount,
+                   const ShaderAssembly &vertex,
+                   const ShaderAssembly &fragment,
+                   const ShaderAssembly &tess_control,
+                   const ShaderAssembly &tess_eval,
+                   const ShaderAssembly &geom,
+                   const ShaderAssembly &comp);
 
- private:
-  QTextEdit* initTab(QString name);
+ signals:
+  void shaderTextObject(RenderShaders *rs);
+
+ public slots:
+  void getShaderText(int renderIndex);
 
  protected:
-  // Source tab.
-  QWidget *source;
-  QVBoxLayout *sourceLayout;
-  static const char *sourceStyleSheet;
-  QTextEdit *sourceText;
-  QWidget *compileArea;
-  QHBoxLayout *compileLayout;
-  QPushButton *compileButton;
-  QWidget *compileSpacer;
-
-  // Other tabs.
-  static const char *styleSheet;
-  QTextEdit *ir;
-  QTextEdit *ssa;
-  QTextEdit *nir;
-  QTextEdit *simd8;
+  QStringList renderStrings;
+  QVector<RenderId> renders;
+  QVector<RenderShaders*> renderData;
 };
 
 }  // namespace glretrace
 
-#endif  // _SHADERDISPLAY_HPP_
+#endif  // _SHADERMODEL_HPP_

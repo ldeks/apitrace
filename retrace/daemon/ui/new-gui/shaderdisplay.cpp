@@ -55,7 +55,6 @@ ShaderDisplay::ShaderDisplay(QWidget *parent) : QTabWidget(parent) {
   sourceLayout->setSpacing(0);
   sourceText = new QTextEdit(source);
   sourceText->setFontFamily("monospace");
-  sourceText->setText("#include <QSizePolicy>\n\n#include <QSizePolicy2>");
   sourceText->setStyleSheet(sourceStyleSheet);
   sourceLayout->addWidget(sourceText);
 
@@ -77,18 +76,34 @@ ShaderDisplay::ShaderDisplay(QWidget *parent) : QTabWidget(parent) {
 
 
   //Other tabs.
-  initTab(ir, "IR");
-  initTab(ssa, "SSA");
-  initTab(nir, "NIR");
-  initTab(simd8, "Simd8");
+  ir = initTab("IR");
+  ssa = initTab("SSA");
+  nir = initTab("NIR");
+  simd8 = initTab("Simd8");
 }
 
 ShaderDisplay::~ShaderDisplay() {
 }
 
-void
-ShaderDisplay::initTab(QTextEdit *tab, QString name) {
-  tab = new QTextEdit(this);
+QTextEdit*
+ShaderDisplay::initTab(QString name) {
+  QTextEdit *tab = new QTextEdit(this);
   tab->setStyleSheet(styleSheet);
+  tab->setFontFamily("monospace");
   addTab(tab, name);
+  return tab;
+}
+
+void
+ShaderDisplay::setText(QString tabname, QString text) {
+  if (tabname == "source")
+    sourceText->setPlainText(text);
+  else if (tabname == "ir")
+    ir->setPlainText(text);
+  else if (tabname == "ssa")
+    ssa->setPlainText(text);
+  else if (tabname == "nir")
+    nir->setPlainText(text);
+  else if (tabname == "simd8")
+    simd8->setPlainText(text);
 }

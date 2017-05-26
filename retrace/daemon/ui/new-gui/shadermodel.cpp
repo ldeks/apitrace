@@ -25,64 +25,44 @@
  *   Laura Ekstrand <laura@jlekstrand.net>
  **************************************************************************/
 
+#include "shadermodel.hpp"
 
-#ifndef _SHADERTAB_HPP_
-#define _SHADERTAB_HPP_
+#include <QString>
 
-#include <QHBoxLayout>
-#include <QListView>
-#include <QStringList>
-#include <QStringListModel>
-#include <QTabWidget>
-#include <QTextEdit>
-#include <QWidget>
+using glretrace::ShaderModel;
 
-#include "uimodel.hpp"
-#include "shaderedit.hpp"
-#include "rendershaders.hpp"
+ShaderModel::ShaderModel(int count) {
+  for (int i = 0; i < count; ++i) {
+    renders.append(RenderId(i));
+    renderStrings << QString::number(i);
+    renderData.append(new RenderShaders());
+  }
+}
 
-namespace glretrace {
+ShaderModel::~ShaderModel() {
+  for (int i = 0; i < renderData.length(); i++) {
+    delete renderData[i];
+  }
+}
 
-class ShaderTab : public QWidget {
-  Q_OBJECT
- public:
-  explicit ShaderTab(QWidget *parent = 0);
-  virtual ~ShaderTab();
+void
+ShaderModel::setAssembly(RenderId renderId,
+                         SelectionId selectionCount,
+                         const ShaderAssembly &vertex,
+                         const ShaderAssembly &fragment,
+                         const ShaderAssembly &tess_control,
+                         const ShaderAssembly &tess_eval,
+                         const ShaderAssembly &geom,
+                         const ShaderAssembly &comp) {
+  renderData[renderId.index()]->addShader("vertex", vertex);
+  renderData[renderId.index()]->addShader("fragment", fragment);
+  renderData[renderId.index()]->addShader("tesselation", tess_control);
+  // renderData[renderId.index()]->addShader(tess_eval);
+  renderData[renderId.index()]->addShader("geometry", geom);
+  renderData[renderId.index()]->addShader("compute", comp);
+}
 
-  UiModel* getModel() { return model; }
-  void setModel(UiModel* mdl);
-
- public slots:
-  void setRenders(QStringList r);
-  void convertActivation(const QModelIndex &index);
-  void populateTabs(RenderShaders *rs);
-
- signals:
-  void shaderActivated(int index);
-  void printMessage(QString msg);
-
- protected:
-  QHBoxLayout *layout;
-  QStringList renders;
-  QStringListModel *rendersModel;
-  QListView *renderSelection;
-  static const char *listStyleSheet;
-  QTabWidget *tabs;
-  ShaderEdit *vertex;
-  ShaderEdit *fragment;
-  ShaderEdit *tesselation;
-  ShaderEdit *geometry;
-  ShaderEdit *compute;
-
-  // Model
-  UiModel* model;
-
- private:
-  void makeConnections();
-  void populateEdit(RenderShaders *rs, ShaderEdit *edit,
-                    QString shaderType);
-};
-
-}  // namespace glretrace
-
-#endif  // _SHADERTAB_HPP_
+void
+ShaderModel::getShaderText(int renderIndex) {
+  emit shaderTextObject(renderData[renderIndex]);
+}

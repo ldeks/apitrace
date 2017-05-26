@@ -14,7 +14,7 @@
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANEDITILITY,
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
@@ -26,48 +26,37 @@
  **************************************************************************/
 
 
-#ifndef _SHADERDISPLAY_HPP_
-#define _SHADERDISPLAY_HPP_
+#ifndef _RENDERSHADERS_HPP_
+#define _RENDERSHADERS_HPP_
 
-#include <QHBoxLayout>
-#include <QPushButton>
-#include <QTabWidget>
-#include <QTextEdit>
-#include <QVBoxLayout>
-#include <QWidget>
+#include <QHash>
+#include <QObject>
+#include <QString>
+
+#include <string>
+
+#include "glframe_retrace_interface.hpp"
 
 namespace glretrace {
 
-class ShaderDisplay : public QTabWidget {
+class RenderShaders : public QObject {
   Q_OBJECT
+
  public:
-  explicit ShaderDisplay(QWidget *parent = 0);
-  virtual ~ShaderDisplay();
+  RenderShaders();
+  ~RenderShaders();
 
-  void setText(QString tabname, QString text);
+  void addShader(QString shaderType, ShaderAssembly s);
+  QString getShaderText(QString shaderType, QString asmType);
+  void setShaderText(QString shaderType, QString asmType, QString text);
 
- private:
-  QTextEdit* initTab(QString name);
+  static std::string *getAssemblyMember(ShaderAssembly *s,
+                                        QString asmType);
 
  protected:
-  // Source tab.
-  QWidget *source;
-  QVBoxLayout *sourceLayout;
-  static const char *sourceStyleSheet;
-  QTextEdit *sourceText;
-  QWidget *compileArea;
-  QHBoxLayout *compileLayout;
-  QPushButton *compileButton;
-  QWidget *compileSpacer;
-
-  // Other tabs.
-  static const char *styleSheet;
-  QTextEdit *ir;
-  QTextEdit *ssa;
-  QTextEdit *nir;
-  QTextEdit *simd8;
+  QHash<QString, ShaderAssembly> shaders;
 };
 
 }  // namespace glretrace
 
-#endif  // _SHADERDISPLAY_HPP_
+#endif  // _RENDERSHADERS_HPP_
