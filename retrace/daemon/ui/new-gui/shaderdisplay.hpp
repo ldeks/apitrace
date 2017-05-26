@@ -30,8 +30,10 @@
 #define _SHADERDISPLAY_HPP_
 
 #include <QHBoxLayout>
+#include <QLineEdit>
 #include <QPushButton>
 #include <QTextEdit>
+#include <QToolButton>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -50,8 +52,14 @@ class ShaderDisplay : public TabWidget {
   void populate(RenderShaders *rs, QString shaderType);
   bool hasText();
 
+ public slots:
+  void findRegExp(const QString &text);
+  void findPrevious();
+  void findNext();
+
  private:
   QTextEdit* initTab(QString name);
+  void makeConnections();
 
  protected:
   // Source tab.
@@ -61,6 +69,12 @@ class ShaderDisplay : public TabWidget {
   QTextEdit *sourceText;
   QWidget *compileArea;
   QHBoxLayout *compileLayout;
+  QLineEdit *findEdit;
+  static const char *findEditNormalStyleSheet;
+  static const char *findEditRedStyleSheet;
+  static const char *findButtonStyleSheet;
+  QToolButton *findUp;
+  QToolButton *findDown;
   QPushButton *compileButton;
   QWidget *compileSpacer;
 
