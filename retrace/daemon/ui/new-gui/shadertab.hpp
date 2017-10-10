@@ -81,6 +81,8 @@ class ShaderTab : public QWidget {
   // Model
   UiModel* model;
 
+  int currentIndex;
+
  private:
   void makeConnections();
 };

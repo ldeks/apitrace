@@ -54,7 +54,7 @@ ShaderTab::listStyleSheet =
     "  background: DarkGray;\n"
     "}";
 
-ShaderTab::ShaderTab(QWidget *parent) : QWidget(parent) {
+ShaderTab::ShaderTab(QWidget *parent) : QWidget(parent), currentIndex(0) {
   layout = new QHBoxLayout(this);
   setLayout(layout);
 
@@ -120,23 +120,27 @@ ShaderTab::setModel(UiModel* mdl) {
           model, &UiModel::needShaderText);
   connect(model, &UiModel::shaderTextObject,
           this, &ShaderTab::populateTabs);
+
+  connect(vertex, &ShaderDisplay::compileNeeded,
+          [=]() { model->requestShaderRecompile(currentIndex); });
 }
 
 void
 ShaderTab::convertActivation(const QModelIndex &index) {
   QVariant varIndex = rendersModel->data(index, Qt::DisplayRole);
   QString stringIndex = varIndex.toString();
-  int intIndex = stringIndex.toInt();
+  currentIndex = stringIndex.toInt();
   QString msg = "activated ";
   msg.append(stringIndex);
   emit printMessage(msg);
-  emit shaderActivated(intIndex);
+  emit shaderActivated(currentIndex);
 }
 
 void
 ShaderTab::activateShader(int index) {
   QModelIndex midx = rendersModel->index(index, 0);
   renderSelection->setCurrentIndex(midx);
+  currentIndex = index;
   if (model)
     model->needShaderText(index);
 }

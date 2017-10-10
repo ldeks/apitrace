@@ -208,6 +208,15 @@ UiModel::onFileOpening(bool needUpload,
 }
 
 void
+UiModel::requestShaderRecompile(int render) {
+    RenderSelection rs;
+    rs.id = m_selection_count;
+    ++m_selection_count;
+    rs.push_back(render);
+    m_retrace.retraceShaderAssembly(rs, this);
+}
+
+void
 UiModel::onShaderAssembly(RenderId renderId,
                           SelectionId selectionCount,
                           const ShaderAssembly &vertex,

@@ -113,6 +113,7 @@ class UiModel : public QObject,
   void getShaderText(int renderIndex);
   void getApiText(int idx);
   void requestRenderTarget(int idx, RenderOptions opt, RenderTargetType rtt);
+  void requestShaderRecompile(int render);
 
  private:
   FrameRetraceStub m_retrace;
